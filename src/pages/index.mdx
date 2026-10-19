@@ -1,0 +1,58 @@
+---
+title: Let's Build Robots
+description: Beginner-first tools for learning robotics safely.
+template: splash
+---
+
+import TopUtilityBar from '../components/TopUtilityBar.astro';
+
+<div class="lbr-home not-content">
+  <TopUtilityBar />
+
+  <div class="lbr-dashboard-content">
+    <section class="lbr-hero" aria-labelledby="hero-title">
+      <div class="lbr-hero-copy">
+        <div class="lbr-eyebrow"><span class="lbr-pulse" aria-hidden="true"></span> A friendly lab for first builds</div>
+        <h1 id="hero-title">Build robots.<br /><span>Understand why.</span></h1>
+        <p class="lbr-hero-lede">A calm, practical starting point for turning curiosity into your first moving machine. Learn one idea, try one tool, and keep your parts safe.</p>
+        <div class="lbr-hero-actions">
+          <a class="lbr-button lbr-button-primary" href="/robots/">Start exploring <span aria-hidden="true">↗</span></a>
+          <a class="lbr-button lbr-button-quiet" href="/forge/">Check a parts list <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="lbr-microcopy"><span aria-hidden="true">●</span> No account needed <span aria-hidden="true">·</span> Built for curious beginners</p>
+      </div>
+
+      <div class="lbr-hero-visual" aria-label="A sample robot build dashboard">
+        <div class="lbr-orbit lbr-orbit-one"></div>
+        <div class="lbr-orbit lbr-orbit-two"></div>
+        <div class="lbr-robot-glyph" aria-hidden="true"><span class="lbr-robot-eye"></span><span class="lbr-robot-eye"></span><i></i></div>
+        <div class="lbr-float-card lbr-float-top"><span class="lbr-float-icon">✦</span><span><strong>Build confidence</strong><small>one small win at a time</small></span></div>
+        <div class="lbr-float-card lbr-float-bottom"><span class="lbr-float-icon lbr-cyan">⌁</span><span><strong>Signal check</strong><small>Beginner-friendly guidance</small></span></div>
+        <div class="lbr-grid-lines" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="lbr-stats" aria-label="LBR at a glance">
+      <div><strong>03</strong><span>hands-on spaces</span></div>
+      <div><strong>15+</strong><span>starter components</span></div>
+      <div><strong>01</strong><span>clear next step</span></div>
+      <p><span class="lbr-status-dot"></span> Learning lab online</p>
+    </section>
+
+    <section class="lbr-section" aria-labelledby="choose-title">
+      <div class="lbr-section-heading"><div><p class="lbr-kicker">Choose your path</p><h2 id="choose-title">Where do you want to begin?</h2></div><span class="lbr-section-note">Tools are labeled honestly, so you always know what to expect.</span></div>
+      <div class="lbr-path-grid">
+        <a class="lbr-path-card lbr-path-orange" href="/robots/"><div class="lbr-path-top"><span class="lbr-card-number">01</span><span class="lbr-path-icon">↗</span></div><h3>Try Live Robots</h3><p>See a small robot respond, then learn the idea behind its movement.</p><span class="lbr-path-link">Explore robots <b>→</b></span></a>
+        <a class="lbr-path-card lbr-path-cyan" href="/forge/"><div class="lbr-path-top"><span class="lbr-card-number">02</span><span class="lbr-path-icon">⌘</span></div><h3>Use The Forge</h3><p>Check power, pins, and shopping totals before you connect a single wire.</p><span class="lbr-path-link">Plan a build <b>→</b></span></a>
+        <a class="lbr-path-card lbr-path-slate" href="/playground/"><div class="lbr-path-top"><span class="lbr-card-number">03</span><span class="lbr-path-icon">⌁</span></div><h3>Pose a Leg</h3><p>Move a three-joint model and see how a robot turns angles into steps.</p><span class="lbr-path-link">Open playground <b>→</b></span></a>
+      </div>
+    </section>
+
+    <section class="lbr-lower-grid">
+      <div class="lbr-panel lbr-roadmap" aria-labelledby="roadmap-title"><div class="lbr-panel-head"><div><p class="lbr-kicker">Your first build</p><h2 id="roadmap-title">A simple route to moving</h2></div><span class="lbr-step-count">1 / 4</span></div><ol class="lbr-roadmap-list"><li class="is-current"><span>01</span><div><strong>Meet the robot</strong><small>Understand what each part does.</small></div><b>Now</b></li><li><span>02</span><div><strong>Check the plan</strong><small>Catch common power and pin mistakes.</small></div></li><li><span>03</span><div><strong>Make it move</strong><small>Use a guided, low-pressure experiment.</small></div></li></ol><a class="lbr-text-link" href="/robots/">See the learning route <b>→</b></a></div>
+      <aside class="lbr-panel lbr-sponsor" aria-label="Sponsor placeholder"><span class="lbr-sponsor-mark">LBR<span>+</span></span><p class="lbr-kicker">Built in public</p><h2>Help the next robot move.</h2><p>LBR is an open learning project. This space is ready for a future education or hardware partner.</p><span class="lbr-placeholder">Sponsor slot · coming soon</span></aside>
+    </section>
+  </div>
+
+  <footer class="lbr-footer"><span><b>LBR</b> · Let's Build Robots</span><span>Learn patiently. Build boldly.</span></footer>
+</div>

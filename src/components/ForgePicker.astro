@@ -1,0 +1,49 @@
+---
+import components from '../data/components.json';
+---
+
+<div class="not-content grid gap-6 lg:grid-cols-[1.15fr_.85fr]" data-forge>
+  <section class="lbr-card p-5">
+    <div class="mb-5 flex items-start justify-between gap-4"><div><p class="lbr-kicker">Deterministic safety check</p><h2 class="text-2xl font-bold">Choose your parts</h2><p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Pick a budget path yourself. LBR explains the trade-offs instead of hiding them.</p></div><span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-700">15 baseline parts</span></div>
+    <div class="mb-5 flex flex-wrap gap-2" data-presets><button type="button" class="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold" data-preset="sensor">Low-cost sensor</button><button type="button" class="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold" data-preset="safe">Safer starter</button><button type="button" class="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold" data-preset="clear">Clear all</button></div>
+    <div class="grid gap-3 sm:grid-cols-2">{components.map((component) => <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-200 p-3 transition hover:border-orange-400 has-[:checked]:border-orange-600 has-[:checked]:bg-orange-50 dark:border-zinc-700 dark:has-[:checked]:bg-orange-950/30"><input type="checkbox" value={component.id} class="mt-1 accent-orange-600" data-part /><span><strong class="block text-sm">{component.part}</strong><small class="block text-xs text-zinc-500" data-price data-in={`₹${component.in.price}`} data-us={`$${component.us.price.toFixed(2)}`}>Robu.in · ₹{component.in.price}</small><span class="eng-only-inline font-mono text-[10px]"> · {component.kind}</span></span></label>)}</div>
+  </section>
+  <aside class="lbr-card p-5" aria-live="polite"><p class="lbr-kicker">Build report</p><h2 class="text-2xl font-bold">Your robot needs...</h2><div data-report class="mt-4 space-y-3"></div></aside>
+</div>
+
+<script define:vars={{ components }}>
+  const root = document.querySelector('[data-forge]');
+  const report = root?.querySelector('[data-report]');
+  const inputs = [...(root?.querySelectorAll<HTMLInputElement>('[data-part]') ?? [])];
+  let country = localStorage.getItem('lbr-country') === 'US' ? 'US' : 'IN';
+  const find = (id) => components.find((part) => part.id === id);
+  const format = (value) => country === 'US' ? `$${value.toFixed(2)}` : `₹${value.toFixed(0)}`;
+  const shipping = () => country === 'US' ? { threshold: 35, fee: 5.99, label: 'free shipping at $35' } : { threshold: 500, fee: 60, label: 'Robu.in free shipping at ₹500' };
+  function message(kind, text) { const colors = { bad: 'border-red-300 bg-red-50 text-red-800', warn: 'border-amber-300 bg-amber-50 text-amber-800', good: 'border-emerald-300 bg-emerald-50 text-emerald-800', info: 'border-cyan-300 bg-cyan-50 text-cyan-900', neutral: 'border-zinc-200 bg-zinc-50 text-zinc-700' }; return `<div class="rounded-lg border p-3 text-sm ${colors[kind] ?? colors.neutral}">${text}</div>`; }
+  function update() {
+    const chosen = components.filter((part) => inputs.some((input) => input.checked && input.value === part.id));
+    const stall = chosen.reduce((sum, part) => sum + part.stallA, 0);
+    const pwm = chosen.reduce((sum, part) => sum + part.pwm, 0);
+    const total = chosen.reduce((sum, part) => sum + (country === 'US' ? part.us.price : part.in.price), 0);
+    const ids = new Set(chosen.map((part) => part.id)); const hasEsp = ids.has('esp32-devkit-v1'); const hasArduino = ids.has('arduino-uno-r3'); const has5v = ids.has('hcsr04-5v'); const hasShift = ids.has('txs0108e-shifter'); const hasPca = ids.has('pca9685-16ch'); const buck = find('buck-5v-8a'); const hasBuck = ids.has('buck-5v-8a');
+    const addresses = chosen.filter((part) => part.i2c).map((part) => part.i2c); const clash = addresses.some((address, index) => addresses.indexOf(address) !== index); const checks = [];
+    if (!chosen.length) checks.push(['neutral', 'Pick a controller and parts. The report will separate facts, warnings, and budget trade-offs.']);
+    if (chosen.length) checks.push(['good', `${chosen.length} parts · ${format(total)} before shipping · ${pwm} PWM channels`]);
+    if (stall) checks.push(['info', `Peak stall total: ${stall.toFixed(2)}A · supply headroom target: ${(stall * 1.25).toFixed(2)}A.`]);
+    if (stall > 0.6 && !hasBuck) checks.push(['bad', 'Board Reset Danger: motor/servo demand is above the 0.6A onboard 5V guard. Use an external regulator and common ground.']);
+    if (hasBuck && stall * 1.25 > buck.max5vA) checks.push(['bad', `Regulator capacity warning: required ${ (stall * 1.25).toFixed(2) }A exceeds this buck regulator's 8A rating.`]);
+    if (pwm >= 8 && !hasPca) checks.push(['warn', 'PWM channel warning: add the PCA9685 16-channel driver.']);
+    if (hasEsp && has5v && !hasShift) checks.push(['bad', 'Pin Burn Risk: HC-SR04 is a 5V signal. Add the TXS0108E level shifter before connecting it to an ESP32.']);
+    if (clash) checks.push(['bad', 'I2C address clash at 0x68: connect MPU-6050 AD0 to 3.3V to move it to 0x69.']);
+    if (hasEsp) checks.push(['info', 'ESP32 pin traps: Wi-Fi disables ADC2 (GPIO 4, 13, 14, 25–27); prefer ADC1 GPIO 32–39. GPIO 0/12 are boot strap pins and GPIO 34–39 are input-only.']);
+    if (ids.has('l298n-driver') && ids.has('dc-gearmotor-12v')) checks.push(['warn', 'Budget trade-off: L298N is a lossy BJT driver. It may waste voltage as heat; the MOSFET driver is the cleaner option.']);
+    if (hasArduino && stall > 0.5 && !hasBuck) checks.push(['bad', 'Arduino 5V rail guard: this selection can exceed the Uno 0.5A 5V output. Power motors/servos separately.']);
+    const ship = shipping(); if (chosen.length && total < ship.threshold) checks.push(['info', `${ship.label}: gap ${format(ship.threshold - total)} · estimated delivery fee ${format(ship.fee)}.`]); else if (chosen.length) checks.push(['good', `Shipping threshold reached for this ${country} basket.`]);
+    if (report) report.innerHTML = checks.map(([kind, text]) => message(kind, text)).join('');
+    root?.querySelectorAll<HTMLElement>('[data-price]').forEach((price) => { price.textContent = country === 'US' ? `Amazon/global · ${price.dataset.us}` : `India listing · ${price.dataset.in}`; });
+  }
+  root?.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) => button.addEventListener('click', () => { const preset = button.dataset.preset; inputs.forEach((input) => { input.checked = preset === 'safe' ? ['esp32-devkit-v1','mg90s-servo-x4','pca9685-16ch','buck-5v-8a','lipo-2s-2200'].includes(input.value) : preset === 'sensor' ? ['esp32-devkit-v1','mpu6050-imu','hcsr04-5v','txs0108e-shifter'].includes(input.value) : false; }); update(); }));
+  inputs.forEach((input) => input.addEventListener('change', update));
+  window.addEventListener('lbr:country-change', (event) => { country = event.detail === 'US' ? 'US' : 'IN'; update(); });
+  update();
+</script>

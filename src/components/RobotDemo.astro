@@ -1,0 +1,27 @@
+<section class="lbr-card overflow-hidden" data-robot-demo>
+  <div class="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-5 py-4 dark:border-zinc-700">
+    <div><p class="lbr-kicker">Supported local demo</p><h2 class="text-2xl font-bold">Spiderbot: servo gait preview</h2></div>
+    <span class="rounded-full bg-cyan-100 px-3 py-1 text-xs font-bold text-cyan-800">No external iframe</span>
+  </div>
+  <div class="grid gap-6 p-5 lg:grid-cols-[1.1fr_.9fr]">
+    <div class="relative min-h-72 overflow-hidden rounded-xl bg-slate-950 p-5" data-demo-stage>
+      <div class="absolute inset-0 opacity-20" style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:32px 32px"></div>
+      <svg viewBox="0 0 480 260" class="relative z-10 h-full min-h-64 w-full" aria-label="A simple spiderbot animation preview">
+        <g fill="none" stroke="#13b9c7" stroke-linecap="round" stroke-width="8" data-legs>
+          <path d="M190 125 L100 65 L55 85"/><path d="M205 135 L110 195 L62 175"/><path d="M290 125 L380 65 L425 85"/><path d="M275 135 L370 195 L418 175"/>
+        </g><rect x="185" y="92" width="110" height="76" rx="25" fill="#17232e" stroke="#f26732" stroke-width="6"/><circle cx="220" cy="126" r="9" fill="#fff"/><circle cx="260" cy="126" r="9" fill="#fff"/><path d="M225 148h30" stroke="#f26732" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+      <div class="absolute bottom-4 left-5 z-20 font-mono text-xs text-cyan-200" data-demo-status>Ready · click Play to start</div>
+    </div>
+    <div class="flex flex-col justify-center"><p class="text-sm leading-7 text-zinc-600 dark:text-zinc-300">This is an honest local motion demo: it shows a repeating gait concept without claiming to emulate a full physics engine or a physical robot.</p><button type="button" class="mt-5 self-start rounded-lg bg-orange-600 px-4 py-2 font-semibold text-white hover:bg-orange-700" data-demo-play>Play gait</button><button type="button" class="mt-2 self-start rounded-lg border border-zinc-300 px-4 py-2 text-sm font-semibold dark:border-zinc-600" data-demo-stop>Stop and release</button><p class="eng-only mt-4 font-mono text-xs text-zinc-500">Island: spiderbot-demo · requestAnimationFrame active only after Play</p></div>
+  </div>
+</section>
+
+<script>
+  import { registerActiveIsland } from '../utils/islandRegistry';
+  const root = document.querySelector('[data-robot-demo]'); const status = root?.querySelector('[data-demo-status]'); const play = root?.querySelector('[data-demo-play]'); const stop = root?.querySelector('[data-demo-stop]'); const legs = root?.querySelector('[data-legs]'); let frame: number | undefined;
+  function destroy() { if (frame) cancelAnimationFrame(frame); frame = undefined; if (legs) legs.removeAttribute('transform'); if (status) status.textContent = 'Stopped · resources released'; }
+  function animate(time: number) { if (!legs) return; legs.setAttribute('transform', `translate(${Math.sin(time / 260) * 8} ${Math.cos(time / 260) * 3})`); frame = requestAnimationFrame(animate); }
+  play?.addEventListener('click', () => { registerActiveIsland('spiderbot-demo', destroy); if (status) status.textContent = 'Running · gait loop active'; frame = requestAnimationFrame(animate); });
+  stop?.addEventListener('click', destroy);
+</script>

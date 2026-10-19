@@ -1,0 +1,61 @@
+---
+interface Props {
+  title?: string;
+  src: string;
+  simName?: string;
+  intervalMs?: number;
+}
+
+const { title = 'Live robot simulator', src, simName = 'simulator', intervalMs = 0 } = Astro.props;
+const instanceId = `sim-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<section class="lbr-card overflow-hidden" data-sim-box={instanceId} data-sim-src={src} data-sim-name={simName} data-sim-interval={intervalMs}>
+  <div class="flex items-center justify-between gap-3 border-b border-zinc-200 px-4 py-3 dark:border-zinc-700">
+    <h2 class="font-semibold">{title}</h2>
+    <span class="font-mono text-xs text-zinc-500">Click to load · 0 MB idle</span>
+  </div>
+  <div class="p-4">
+    <button type="button" data-load-sim class="rounded-md bg-orange-600 px-4 py-2 font-semibold text-white hover:bg-orange-700">
+      Play simulator
+    </button>
+    <div data-sim-host class="mt-4 hidden min-h-48 rounded-lg bg-zinc-100 p-2 dark:bg-zinc-900"></div>
+  </div>
+</section>
+
+<script>
+  import { registerActiveIsland } from '../utils/islandRegistry';
+
+  const box = document.querySelector<HTMLElement>('[data-sim-box]');
+  const loadButton = box?.querySelector('[data-load-sim]');
+  const host = box?.querySelector('[data-sim-host]');
+  const src = box?.dataset.simSrc ?? 'about:blank';
+  const simName = box?.dataset.simName ?? 'simulator';
+  const intervalMs = Number(box?.dataset.simInterval ?? 0);
+  let intervalId: number | undefined;
+  let iframe: HTMLIFrameElement | undefined;
+
+  function destroySim() {
+    if (intervalId !== undefined) window.clearInterval(intervalId);
+    intervalId = undefined;
+    if (iframe) {
+      iframe.src = 'about:blank';
+      iframe.remove();
+    }
+    iframe = undefined;
+    host?.classList.add('hidden');
+  }
+
+  loadButton?.addEventListener('click', () => {
+    registerActiveIsland(simName, destroySim);
+    if (!host || iframe) return;
+    host.classList.remove('hidden');
+    iframe = document.createElement('iframe');
+    iframe.title = simName;
+    iframe.src = src;
+    iframe.loading = 'lazy';
+    iframe.className = 'h-80 w-full rounded-md border-0';
+    host.append(iframe);
+    if (intervalMs > 0) intervalId = window.setInterval(() => iframe?.contentWindow?.postMessage({ type: 'lbr:tick' }, '*'), intervalMs);
+  });
+</script>

@@ -1,0 +1,63 @@
+---
+const { activeView = '' } = Astro.props;
+---
+
+<div class="lbr-card flex flex-wrap items-center justify-between gap-3 px-4 py-3" data-active-view={activeView}>
+  <div class="flex items-center gap-2">
+    <span class="font-mono text-sm font-bold text-orange-600">LBR<span class="text-cyan-500">+</span></span>
+    <span class="text-sm font-semibold">Let's Build Robots <span class="hidden text-xs font-normal text-zinc-500 sm:inline">/ learning lab</span></span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2 text-sm">
+    <label class="flex items-center gap-2">
+      <span class="sr-only">Experience mode</span>
+      <select id="lbr-mode" class="rounded-md border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:bg-zinc-900">
+        <option value="beginner">Beginner View</option>
+        <option value="engineer">Engineer View</option>
+      </select>
+    </label>
+    <label class="flex items-center gap-2">
+      <span class="sr-only">Shopping country</span>
+      <select id="lbr-country" class="rounded-md border border-zinc-300 bg-white px-2 py-1.5 font-mono text-sm dark:bg-zinc-900">
+        <option value="IN">IN · ₹</option>
+        <option value="US">US · $</option>
+      </select>
+    </label>
+      <a href="/" class="hidden rounded-md px-2 py-1.5 text-xs font-semibold text-zinc-500 hover:text-orange-600 sm:inline">Home</a>
+      <button id="lbr-close-sim" type="button" class="rounded-md bg-orange-600 px-3 py-1.5 font-semibold text-white hover:bg-orange-700">
+       Reset active tool
+    </button>
+  </div>
+</div>
+
+<script>
+  import { clearActiveIsland } from '../utils/islandRegistry';
+
+  const mode = document.querySelector<HTMLSelectElement>('#lbr-mode');
+  const country = document.querySelector<HTMLSelectElement>('#lbr-country');
+  const closeSim = document.querySelector<HTMLButtonElement>('#lbr-close-sim');
+
+  const savedMode = localStorage.getItem('lbr-mode');
+  const savedCountry = localStorage.getItem('lbr-country');
+  if (savedMode === 'engineer' || savedMode === 'beginner') {
+    if (mode) mode.value = savedMode;
+    document.body.classList.toggle('engineer-mode', savedMode === 'engineer');
+  }
+  if (savedCountry === 'IN' || savedCountry === 'US' ) {
+    if (country) country.value = savedCountry;
+    document.documentElement.dataset.country = savedCountry;
+  }
+
+  mode?.addEventListener('change', () => {
+    document.body.classList.toggle('engineer-mode', mode.value === 'engineer');
+    localStorage.setItem('lbr-mode', mode.value);
+  });
+
+  country?.addEventListener('change', () => {
+    document.documentElement.dataset.country = country.value;
+    localStorage.setItem('lbr-country', country.value);
+    window.dispatchEvent(new CustomEvent('lbr:country-change', { detail: country.value }));
+  });
+
+  closeSim?.addEventListener('click', clearActiveIsland);
+</script>

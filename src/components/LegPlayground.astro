@@ -1,0 +1,28 @@
+<div class="not-content grid gap-6 lg:grid-cols-[1fr_1fr]" data-leg>
+  <section class="lbr-card p-5"><p class="lbr-kicker">3-DOF pose</p><h2 class="text-2xl font-bold">Pose your robot leg</h2><div class="mt-6 space-y-5">
+    <label class="block"><span class="mb-2 flex justify-between text-sm font-semibold"><span>Hip</span><output data-output="hip">0°</output></span><input class="w-full accent-orange-600" type="range" min="-90" max="90" value="0" data-joint="hip" /></label>
+    <label class="block"><span class="mb-2 flex justify-between text-sm font-semibold"><span>Thigh</span><output data-output="thigh">25°</output></span><input class="w-full accent-orange-600" type="range" min="-90" max="90" value="25" data-joint="thigh" /></label>
+    <label class="block"><span class="mb-2 flex justify-between text-sm font-semibold"><span>Knee</span><output data-output="knee">-20°</output></span><input class="w-full accent-orange-600" type="range" min="-90" max="90" value="-20" data-joint="knee" /></label>
+  </div></section>
+  <aside class="lbr-card p-5"><p class="lbr-kicker">Live coordinates</p><div class="mt-4 grid grid-cols-3 gap-2 text-center font-mono"><div class="rounded-lg bg-zinc-100 p-3 dark:bg-zinc-900"><strong data-coord="x">0</strong><small class="block text-xs">X mm</small></div><div class="rounded-lg bg-zinc-100 p-3 dark:bg-zinc-900"><strong data-coord="y">0</strong><small class="block text-xs">Y mm</small></div><div class="rounded-lg bg-zinc-100 p-3 dark:bg-zinc-900"><strong data-coord="z">120</strong><small class="block text-xs">Z mm</small></div></div><pre class="mt-5 overflow-auto rounded-lg bg-slate-950 p-4 text-xs text-cyan-300"><code data-code>servo.write(90);</code></pre><button class="mt-4 rounded-lg bg-orange-600 px-4 py-2 font-semibold text-white" data-copy>Copy Arduino starter code</button></aside>
+</div>
+
+<script>
+  import { registerActiveIsland } from '../utils/islandRegistry';
+  const root = document.querySelector('[data-leg]');
+  const joints = [...(root?.querySelectorAll<HTMLInputElement>('[data-joint]') ?? [])];
+  function update() {
+    const a = joints.map((j) => Number(j.value));
+    const x = Math.round(90 * Math.sin(a[0] * Math.PI / 180));
+    const y = Math.round(90 * Math.sin(a[1] * Math.PI / 180));
+    const z = Math.round(120 + 60 * Math.cos(a[2] * Math.PI / 180));
+    joints.forEach((j) => { const output = root?.querySelector(`[data-output="${j.dataset.joint}"]`); if (output) output.textContent = `${j.value}°`; });
+    [['x', x], ['y', y], ['z', z]].forEach(([key, value]) => { const element = root?.querySelector(`[data-coord="${key}"]`); if (element) element.textContent = String(value); });
+    const code = root?.querySelector('[data-code]');
+    if (code) code.textContent = `hip.write(${a[0] + 90});\nthigh.write(${a[1] + 90});\nknee.write(${a[2] + 90});`;
+  }
+  joints.forEach((joint) => joint.addEventListener('input', update));
+  update();
+  root?.querySelector('[data-copy]')?.addEventListener('click', async () => { await navigator.clipboard?.writeText(root?.querySelector('[data-code]')?.textContent ?? ''); });
+  registerActiveIsland('leg-playground', () => undefined);
+</script>
