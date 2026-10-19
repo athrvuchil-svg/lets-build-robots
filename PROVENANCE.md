@@ -3,7 +3,7 @@
 - Project: Let's Build Robots (LBR)
 - Creator and maintainer: Athrv Uchil
 - Initial local implementation: October 2026
-- Purpose: beginner-first robotics education and deterministic pre-wiring checks
+- Purpose: personal beginner-first robotics education and deterministic pre-wiring checks
 
 The initial implementation, original interface copy, and project direction were created for this repository. The 15-part baseline in `src/data/components.json` follows the project brief and is intended as an educational catalogue snapshot. Retailer names, prices, part names, and technical facts may belong to their respective owners; they are not endorsements or sponsorships.
 

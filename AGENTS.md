@@ -1,6 +1,6 @@
 # Let's Build Robots (LBR) — Agent Rules
 
-LBR is an open-source, beginner-first robotics learning platform for Athrv Uchil's NMIMS MPSTME Mechatronics Engineering term work. The hard academic milestone is the **NMIMS Term End Exams (TEE) period in November 2026**. The immediate shipping target is a public, fast demo by **Sunday, October 25, 2026**, at `letsbuildrobots.tech` or `lets-build-robots.pages.dev`.
+LBR is Athrv Uchil's personal, solo, open-source side project: a beginner-first robotics learning platform. It is separate from any official NMIMS course, term project, or institutional product. The immediate shipping target is a public, fast demo by **Sunday, October 25, 2026**, at `letsbuildrobots.tech` or `lets-build-robots.pages.dev`; academics, exams, real robotics projects, and future master's preparation remain higher priorities.
 
 ## Six non-negotiable engineering rules
 
