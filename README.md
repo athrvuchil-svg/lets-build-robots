@@ -4,7 +4,7 @@ Let's Build Robots is a solo, student-led beginner robotics learning platform cr
 
 ## Current status
 
-This is an early public MVP for Athrv's personal robotics learning platform and side project. It is separate from any official NMIMS course, term project, or institutional product. The current release includes a visual landing page, a deterministic Forge parts checker, a lightweight robot-leg playground, and a click-to-start robot demo.
+This is an early public MVP for Athrv's personal robotics learning platform and side project. The current release includes a visual landing page, a deterministic Forge parts checker, a lightweight robot-leg playground, and a click-to-start robot demo.
 
 The tools are educational aids, not manufacturer certification. Prices and availability are snapshots and can change. Always follow component datasheets and safe battery handling practices.
 
