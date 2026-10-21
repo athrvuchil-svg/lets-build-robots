@@ -1,0 +1,15 @@
+---
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<aside class:list={{ 'lbr-sponsor-slot': true, 'lbr-sponsor-slot-compact': compact }} aria-label="728 by 90 sponsor slot" data-sponsor-slot="728x90">
+  <div>
+    <span class="lbr-sponsor-label">LBR · BUILT IN PUBLIC</span>
+    <strong>Space for a robotics education partner</strong>
+  </div>
+  <span class="lbr-sponsor-size">728 × 90 · sponsor slot</span>
+</aside>

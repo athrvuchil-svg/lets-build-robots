@@ -1,0 +1,176 @@
+---
+const profiles = [
+  {
+    id: 'servo-gait',
+    number: '01',
+    name: 'Servo gait',
+    plain: 'A small four-leg rhythm preview. It demonstrates timing, not a physics engine.',
+    detail: '4 channels · 50 Hz target · deterministic motion',
+  },
+  {
+    id: 'line-follow',
+    number: '02',
+    name: 'Line follower',
+    plain: 'Two pretend light sensors steer a tiny rover toward the dark line.',
+    detail: '2 sensors · local signal loop · no camera feed',
+  },
+  {
+    id: 'motor-ramp',
+    number: '03',
+    name: 'Motor ramp',
+    plain: 'A safe visual ramp shows how PWM can change a motor command over time.',
+    detail: 'PWM preview · 0–100% · command only',
+  },
+];
+---
+
+<section class="lbr-card lbr-sim-workspace" data-local-simulator>
+  <div class="lbr-workspace-heading">
+    <div>
+      <p class="lbr-kicker">Local simulator workspace</p>
+      <h2>Pick one small experiment</h2>
+      <p class="lbr-muted-copy">These are self-contained browser demos. No external simulator, robot, camera, or cloud session is loaded.</p>
+    </div>
+    <span class="lbr-local-badge">LOCAL ONLY</span>
+  </div>
+
+  <div class="lbr-sim-layout">
+    <div class="lbr-profile-list" role="tablist" aria-label="Local simulator profiles">
+      {profiles.map((profile, index) => (
+        <button class:list={{ 'is-selected': index === 0 }} class="lbr-profile-button" type="button" role="tab" aria-selected={index === 0 ? 'true' : 'false'} data-profile={profile.id}>
+          <span class="lbr-profile-number">{profile.number}</span>
+          <span><strong>{profile.name}</strong><small>{profile.plain}</small></span>
+        </button>
+      ))}
+    </div>
+
+    <div class="lbr-sim-stage" data-sim-stage>
+      <div class="lbr-stage-grid" aria-hidden="true"></div>
+      <div class="lbr-stage-robot" data-stage-robot aria-label="Local robot preview"><span></span><span></span><i></i></div>
+      <div class="lbr-line-track" data-line-track aria-hidden="true"><b data-line-marker></b></div>
+      <div class="lbr-motor-gauge" data-motor-gauge aria-hidden="true"><span data-motor-fill></span></div>
+      <p class="lbr-stage-label" data-stage-label>Servo gait · ready</p>
+    </div>
+
+    <div class="lbr-sim-console">
+      <div class="lbr-console-top"><span data-sim-status>Ready</span><span class="font-mono" data-sim-tick>tick 000</span></div>
+      <p data-sim-description>{profiles[0].plain}</p>
+      <div class="lbr-sim-actions"><button class="lbr-button lbr-button-primary" type="button" data-sim-play>Play</button><button class="lbr-button lbr-button-quiet" type="button" data-sim-stop>Stop and release</button></div>
+      <div class="lbr-log-wrap"><div class="lbr-log-heading"><strong>Run log</strong><span class="eng-only-inline">local event stream</span></div><ul class="lbr-run-log" data-run-log><li>Ready · nothing is running</li></ul></div>
+      <p class="eng-only lbr-engineer-note">No iframe or remote runtime is created. The active island owns one timer and releases it on Stop, Close, or profile change.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { registerActiveIsland } from '../utils/islandRegistry';
+
+  const root = document.querySelector<HTMLElement>('[data-local-simulator]');
+  const profileButtons = [...(root?.querySelectorAll<HTMLButtonElement>('[data-profile]') ?? [])];
+  const status = root?.querySelector<HTMLElement>('[data-sim-status]');
+  const tickLabel = root?.querySelector<HTMLElement>('[data-sim-tick]');
+  const description = root?.querySelector<HTMLElement>('[data-sim-description]');
+  const stageLabel = root?.querySelector<HTMLElement>('[data-stage-label]');
+  const stageRobot = root?.querySelector<HTMLElement>('[data-stage-robot]');
+  const lineMarker = root?.querySelector<HTMLElement>('[data-line-marker]');
+  const lineTrack = root?.querySelector<HTMLElement>('[data-line-track]');
+  const motorGauge = root?.querySelector<HTMLElement>('[data-motor-gauge]');
+  const motorFill = root?.querySelector<HTMLElement>('[data-motor-fill]');
+  const log = root?.querySelector<HTMLUListElement>('[data-run-log]');
+  const play = root?.querySelector<HTMLButtonElement>('[data-sim-play]');
+  const stop = root?.querySelector<HTMLButtonElement>('[data-sim-stop]');
+
+  const profileCopy: Record<string, { name: string; plain: string }> = {
+    'servo-gait': { name: 'Servo gait', plain: 'A small four-leg rhythm preview. It demonstrates timing, not a physics engine.' },
+    'line-follow': { name: 'Line follower', plain: 'Two pretend light sensors steer a tiny rover toward the dark line.' },
+    'motor-ramp': { name: 'Motor ramp', plain: 'A safe visual ramp shows how PWM can change a motor command over time.' },
+  };
+  let selected = 'servo-gait';
+  let timer: number | undefined;
+  let tick = 0;
+  let linePosition = 50;
+  let roverPosition = 50;
+  let roverVelocity = 0;
+  let motorOutput = 0;
+
+  function addLog(message: string) {
+    if (!log) return;
+    const item = document.createElement('li');
+    item.textContent = message;
+    log.prepend(item);
+    while (log.children.length > 4) log.lastElementChild?.remove();
+  }
+
+  function resetVisuals() {
+    stageRobot?.style.setProperty('transform', 'translate(-50%, -50%) rotate(0deg)');
+    lineMarker?.style.setProperty('left', '50%');
+    if (motorFill) motorFill.style.width = '0%';
+  }
+
+  function destroy() {
+    if (timer !== undefined) window.clearInterval(timer);
+    timer = undefined;
+    tick = 0;
+    linePosition = 50;
+    roverPosition = 50;
+    roverVelocity = 0;
+    motorOutput = 0;
+    resetVisuals();
+    if (status) status.textContent = 'Stopped · resources released';
+    if (tickLabel) tickLabel.textContent = 'tick 000';
+    if (stageLabel) stageLabel.textContent = `${profileCopy[selected].name} · stopped`;
+  }
+
+  function step() {
+    tick += 1;
+    if (tickLabel) tickLabel.textContent = `tick ${String(tick).padStart(3, '0')}`;
+    if (selected === 'servo-gait') {
+      const phase = tick / 5;
+      stageRobot?.style.setProperty('transform', `translate(-50%, -50%) rotate(${Math.sin(phase) * 5}deg) translateY(${Math.cos(phase * 1.3) * 4}px)`);
+    } else if (selected === 'line-follow') {
+      linePosition = 50 + Math.sin(tick / 10) * 27;
+      const error = linePosition - roverPosition;
+      const leftSensor = Math.max(0, 1 - Math.abs(error - 8) / 18);
+      const rightSensor = Math.max(0, 1 - Math.abs(error + 8) / 18);
+      const steering = (rightSensor - leftSensor) * 1.8;
+      roverVelocity = Math.max(-3, Math.min(3, roverVelocity + steering * 0.22));
+      roverPosition = Math.max(5, Math.min(95, roverPosition + roverVelocity));
+      lineMarker?.style.setProperty('left', `${roverPosition}%`);
+      lineTrack?.style.setProperty('--line-brightness', `${0.45 + Math.max(leftSensor, rightSensor) * 0.5}`);
+      addLog(`Sensors L ${leftSensor.toFixed(2)} · R ${rightSensor.toFixed(2)} · steering ${steering.toFixed(2)}`);
+    } else {
+      const target = tick < 12 ? tick * 8 : 100;
+      motorOutput += (target - motorOutput) * 0.24;
+      if (motorFill) motorFill.style.width = `${motorOutput.toFixed(1)}%`;
+      addLog(`PWM target ${target}% · measured ${motorOutput.toFixed(1)}%`);
+    }
+  }
+
+  function start() {
+    destroy();
+    registerActiveIsland(`local-${selected}`, destroy);
+    if (status) status.textContent = 'Running · local loop active';
+    if (stageLabel) stageLabel.textContent = `${profileCopy[selected].name} · running`;
+    addLog(`Started ${profileCopy[selected].name}`);
+    timer = window.setInterval(step, 180);
+  }
+
+  profileButtons.forEach((button) => button.addEventListener('click', () => {
+    destroy();
+    selected = button.dataset.profile ?? 'servo-gait';
+    profileButtons.forEach((item) => {
+      const isSelected = item === button;
+      item.classList.toggle('is-selected', isSelected);
+      item.setAttribute('aria-selected', String(isSelected));
+    });
+    if (description) description.textContent = profileCopy[selected].plain;
+    if (stageLabel) stageLabel.textContent = `${profileCopy[selected].name} · ready`;
+    if (selected === 'line-follow') lineTrack?.classList.add('is-visible'); else lineTrack?.classList.remove('is-visible');
+    if (selected === 'motor-ramp') motorGauge?.classList.add('is-visible'); else motorGauge?.classList.remove('is-visible');
+    if (selected !== 'servo-gait') stageRobot?.classList.add('is-muted'); else stageRobot?.classList.remove('is-muted');
+    addLog(`Selected ${profileCopy[selected].name}`);
+  }));
+
+  play?.addEventListener('click', start);
+  stop?.addEventListener('click', () => { destroy(); addLog('Stopped · local resources released'); });
+</script>

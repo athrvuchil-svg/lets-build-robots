@@ -1,0 +1,37 @@
+---
+title: Build Challenges
+description: Small robotics challenges with clear constraints and copyable developer templates.
+---
+
+import TopUtilityBar from '../../components/TopUtilityBar.astro';
+import LearningPageInteractions from '../../components/LearningPageInteractions.astro';
+import '../../styles/custom.css';
+
+<div class="lbr-page lbr-challenges-page">
+  <TopUtilityBar activeView="challenges" />
+
+  <header class="lbr-page-hero">
+    <p class="lbr-kicker">Practice by making</p>
+    <h1>Small challenges. Real understanding.</h1>
+    <p class="lbr-page-lede">Pick a bounded problem, make one observation, and leave a note for your future self. The goal is not a perfect robot on the first try; it is a clear next experiment.</p>
+  </header>
+
+  <section class="lbr-feature-challenge lbr-card" aria-labelledby="challenge-title">
+    <div class="lbr-challenge-art" aria-hidden="true"><span class="lbr-challenge-orbit"></span><span class="lbr-challenge-bot">●</span><span class="lbr-challenge-spark">✦</span></div>
+    <div class="lbr-challenge-copy"><p class="lbr-kicker">Challenge 01 · starter level</p><h2 id="challenge-title">The signal lantern</h2><p>Make one light tell the truth about one input. When a button is pressed, the light turns on; when it is released, the light turns off. Then add a short note explaining what the controller is reading.</p><div class="lbr-challenge-meta"><span>⌁ 20–30 min</span><span>▣ one board</span><span>↯ low power</span></div><div class="lbr-challenge-steps"><div><b>01</b><span>Read one input.</span></div><div><b>02</b><span>Change one output.</span></div><div><b>03</b><span>Explain the signal.</span></div></div><p class="eng-only lbr-technical-note"><strong>Engineer extension:</strong> Add debounce, then log the input transition time. Keep the output safe if the input is disconnected.</p><a class="lbr-button lbr-button-primary" href="/roadmap/">Use the roadmap <span aria-hidden="true">→</span></a></div>
+  </section>
+
+  <section class="lbr-challenge-list" aria-labelledby="more-challenges-title">
+    <div class="lbr-section-heading"><div><p class="lbr-kicker">Next experiments</p><h2 id="more-challenges-title">Choose your level of stretch</h2></div><p class="lbr-section-note">Each card has one outcome. Stop when the outcome is clear.</p></div>
+    <div class="lbr-mini-challenge-grid"><article class="lbr-mini-challenge"><span class="lbr-chip lbr-chip-cyan">Observe</span><h3>Sensor postcard</h3><p>Record five readings from a sensor and describe what changed when the world changed.</p><span class="lbr-mini-footer">One sensor · no motor</span></article><article class="lbr-mini-challenge"><span class="lbr-chip lbr-chip-orange">Move</span><h3>One-degree dance</h3><p>Move a servo through three deliberate positions and label each position in plain language.</p><span class="lbr-mini-footer">One servo · gentle steps</span></article><article class="lbr-mini-challenge"><span class="lbr-chip lbr-chip-slate">Explain</span><h3>Build teardown</h3><p>Draw the power and signal paths of a project so another beginner can spot its risky connection.</p><span class="lbr-mini-footer">Paper first · honest notes</span></article></div>
+  </section>
+
+  <section class="lbr-exporter lbr-card" aria-labelledby="export-title">
+    <div class="lbr-exporter-head"><div><p class="lbr-kicker">For your next repo</p><h2 id="export-title">Developer config exporter</h2><p>Fill in a few notes and copy a starter configuration into your project README or issue. This is a copyable template; it does not connect to GitHub, a device, or any external service.</p></div><span class="lbr-template-badge">COPYABLE TEMPLATE</span></div>
+    <div class="lbr-exporter-grid"><div class="lbr-exporter-fields"><label for="config-name">Project name<input id="config-name" type="text" value="signal-lantern" /></label><label for="config-board">Board<select id="config-board"><option>ESP32 DevKit V1</option><option>Arduino Uno R3</option><option>Choose later</option></select></label><label for="config-goal">One-line goal<textarea id="config-goal" rows="3">Make one light reflect one button input.</textarea></label><button class="lbr-button lbr-button-primary" id="copy-config" type="button">Copy template <span aria-hidden="true">↗</span></button><span id="copy-status" class="lbr-copy-status" role="status" aria-live="polite"></span></div><div class="lbr-config-preview"><div class="lbr-config-bar"><span>lbr-challenge.config.json</span><span>template</span></div><pre id="config-output" aria-label="Generated copyable configuration"></pre></div></div>
+  </section>
+
+  <p class="lbr-page-footnote"><span class="lbr-status-dot"></span> A template is a starting point. Verify pins, voltage, and library support against your exact parts.</p>
+</div>
+
+<LearningPageInteractions />

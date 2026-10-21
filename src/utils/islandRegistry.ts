@@ -15,6 +15,7 @@ export function clearActiveIsland(): void {
   window.__LBR_ACTIVE_TOOL__ = undefined;
   window.__LBR_ACTIVE_TOOL_NAME__ = undefined;
   destroy?.();
+  window.dispatchEvent(new CustomEvent('lbr:active-tool-change'));
 }
 
 /** Register one island and tear down any previous island first. */
@@ -24,4 +25,5 @@ export function registerActiveIsland(name: string, destroy: IslandDestroyer): vo
   clearActiveIsland();
   window.__LBR_ACTIVE_TOOL_NAME__ = name;
   window.__LBR_ACTIVE_TOOL__ = destroy;
+  window.dispatchEvent(new CustomEvent('lbr:active-tool-change'));
 }

@@ -3,11 +3,29 @@ title: Try Live Robots
 ---
 
 import TopUtilityBar from '../../components/TopUtilityBar.astro';
-import RobotDemo from '../../components/RobotDemo.astro';
+import SponsorSlot from '../../components/SponsorSlot.astro';
+import LocalSimulatorWorkspace from '../../components/LocalSimulatorWorkspace.astro';
+import GitHubRobotPull from '../../components/GitHubRobotPull.astro';
 import '../../styles/custom.css';
 
-<TopUtilityBar activeView="robots" />
+<div class="lbr-page-shell not-content">
+  <TopUtilityBar activeView="robots" />
+  <SponsorSlot />
 
-<p>Choose a robot and press Play when you are ready. The demo is click-to-load and does not start animation on initial page load.</p>
+  <section class="lbr-page-hero" aria-labelledby="robots-title">
+    <div>
+      <p class="lbr-eyebrow"><span class="lbr-pulse" aria-hidden="true"></span> Beginner-friendly robot lab</p>
+      <h1 id="robots-title">Try a robot idea<br /><span>before you wire it.</span></h1>
+      <p class="lbr-hero-lede">Run a real browser simulation, then pull current open-source robot code from GitHub. The distinction is visible: local physics stays local, repository data comes from the live public API.</p>
+    </div>
+    <div class="lbr-page-hero-note"><strong>03</strong><span>honest local profiles</span><small>SVG and DOM only · no iframe</small></div>
+  </section>
 
-<RobotDemo />
+  <LocalSimulatorWorkspace />
+  <GitHubRobotPull />
+
+  <section class="lbr-community-card lbr-robots-community" aria-labelledby="robots-community-title">
+    <div class="lbr-community-heading"><div><p class="lbr-kicker">Starter Q&amp;A</p><h2 id="robots-community-title">What should I try first?</h2></div><span class="lbr-planned-badge">PLANNED · GISCUS INTEGRATION</span></div>
+    <div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>Does this simulator replace testing a real robot?</strong><p>No. It is a small visual explanation for timing and signals. Use datasheets, current limits, and supervised bench testing for real hardware.</p><span>Community answer mock · discussion is not connected yet</span></div></div>
+  </section>
+</div>

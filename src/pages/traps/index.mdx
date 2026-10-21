@@ -1,0 +1,75 @@
+---
+title: Common Traps
+description: Catch the small wiring and pin mistakes that make first robot builds confusing.
+---
+
+import TopUtilityBar from '../../components/TopUtilityBar.astro';
+import LearningPageInteractions from '../../components/LearningPageInteractions.astro';
+import '../../styles/custom.css';
+
+<div class="lbr-page lbr-traps-page">
+  <TopUtilityBar activeView="traps" />
+
+  <header class="lbr-page-hero">
+    <p class="lbr-kicker">The friendly warning shelf</p>
+    <h1>Mistake Saver Wiki: catch traps early.</h1>
+    <p class="lbr-page-lede">Most first-build surprises are small mismatches: a supply that is asked to do too much, a pin with a special job, or two sensors speaking at the same address. Start with the plain-English explanation, then switch to Engineer View when you want the pin numbers.</p>
+  </header>
+
+  <section class="lbr-trap-shell lbr-card" aria-labelledby="trap-guide-title">
+    <div class="lbr-panel-head lbr-trap-heading">
+      <div>
+        <p class="lbr-kicker">Before you wire</p>
+        <h2 id="trap-guide-title">Pick the kind of trap to inspect</h2>
+      </div>
+      <span class="lbr-soft-label">No live hardware required</span>
+    </div>
+
+    <div class="lbr-tab-list" role="tablist" aria-label="Trap categories">
+      <button class="lbr-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="trap-panel-power" id="trap-tab-power" data-trap-tab="power">ESP32 Pin Guide</button>
+      <button class="lbr-tab" type="button" role="tab" aria-selected="false" aria-controls="trap-panel-pins" id="trap-tab-pins" data-trap-tab="pins">Why Servos Shake</button>
+      <button class="lbr-tab" type="button" role="tab" aria-selected="false" aria-controls="trap-panel-i2c" id="trap-tab-i2c" data-trap-tab="i2c">Motor Driver Guide</button>
+    </div>
+
+    <div class="lbr-trap-panel is-active" role="tabpanel" id="trap-panel-power" aria-labelledby="trap-tab-power" data-trap-panel="power">
+      <div class="lbr-trap-intro"><span class="lbr-trap-number">01</span><div><h3>ESP32 pins have different jobs</h3><p>ADC2 stops working when Wi-Fi starts, GPIO 0 and 12 can affect boot, and GPIO 34–39 are input-only. Pick the pin for the job instead of guessing.</p></div></div>
+      <div class="lbr-trap-grid">
+        <article class="lbr-trap-card lbr-trap-card-warn"><span class="lbr-trap-icon">🛑</span><h4>Mistake 1: sensor stops on Wi-Fi</h4><p>Use ADC1 GPIO 32–39 for analog sensors when Wi-Fi is enabled. ADC2 is unavailable during Wi-Fi.</p><p class="eng-only lbr-technical-note"><strong>Engineering note:</strong> ADC2 includes GPIO 4, 13, 14, 25–27.</p></article>
+        <article class="lbr-trap-card"><span class="lbr-trap-icon">⚠️</span><h4>Mistake 2: board refuses to start</h4><p>GPIO 0 and 12 are startup strap pins. A sensor pulling one the wrong way can stop boot.</p><p class="eng-only lbr-technical-note"><strong>Engineering note:</strong> Check the exact ESP32 module’s boot-state table.</p></article>
+        <article class="lbr-trap-card"><span class="lbr-trap-icon">💡</span><h4>Mistake 3: listen-only pins</h4><p>GPIO 34–39 can read sensors but cannot drive LEDs, motors, or servo signals.</p><p class="eng-only lbr-technical-note"><strong>Engineering note:</strong> A pin’s input-only limitation is electrical, not a software setting.</p></article>
+        <a class="lbr-button lbr-button-primary" href="/forge/?preset=esp32-safe">🔧 Load Safe ESP32 Starter Kit →</a>
+      </div>
+    </div>
+
+    <div class="lbr-trap-panel" role="tabpanel" id="trap-panel-pins" aria-labelledby="trap-tab-pins" data-trap-panel="pins" hidden>
+      <div class="lbr-trap-intro"><span class="lbr-trap-number">02</span><div><h3>Why servos shake</h3><p>Six to ten amp stall spikes can brown out a board. A ₹245 PCA9685 plus a ₹260 5V 8A buck keeps servo power off the tiny controller rail.</p></div></div>
+      <div class="lbr-filter-row" aria-label="Filter pin traps">
+        <span class="lbr-filter-label">Show:</span>
+        <button class="lbr-filter is-active" type="button" data-pin-filter="all" aria-pressed="true">Show All</button>
+        <button class="lbr-filter" type="button" data-pin-filter="safe" aria-pressed="false">✅ Safe for Anything</button>
+        <button class="lbr-filter" type="button" data-pin-filter="adc1" aria-pressed="false">📡 Best for Sensors</button>
+        <button class="lbr-filter" type="button" data-pin-filter="trap" aria-pressed="false">⚠️ Careful at Startup</button>
+        <button class="lbr-filter" type="button" data-pin-filter="forbidden" aria-pressed="false">🛑 Never Touch</button>
+      </div>
+      <div class="lbr-trap-grid lbr-pin-grid">
+        <article class="lbr-trap-card" data-pin-board="esp32"><span class="lbr-chip lbr-chip-cyan">ESP32</span><h4>Wi-Fi and analog may compete</h4><p>When Wi-Fi is on, some analog inputs stop being a reliable choice. Start with a pin your board guide says is safe for your job.</p><p class="eng-only lbr-technical-note"><strong>Engineering note:</strong> ADC2 is unavailable while Wi-Fi is active; prefer ADC1 GPIO 32–39. GPIO 34–39 are input-only.</p></article>
+        <article class="lbr-trap-card" data-pin-board="esp32"><span class="lbr-chip lbr-chip-cyan">ESP32</span><h4>Boot pins need a quiet start</h4><p>A button, sensor, or pull-up attached to a boot strap pin can stop the board from starting. Move the accessory to an ordinary GPIO while learning.</p><p class="eng-only lbr-technical-note"><strong>Engineering note:</strong> GPIO 0 and GPIO 12 are strap pins on the baseline guidance. Check your exact module’s pinout.</p></article>
+        <article class="lbr-trap-card" data-pin-board="uno"><span class="lbr-chip lbr-chip-orange">Arduino Uno</span><h4>Digital does not mean “any task”</h4><p>Some pins are already used by USB serial, LEDs, or a library. Leave a little room for debugging instead of filling every pin on the first attempt.</p><p class="eng-only lbr-technical-note"><strong>Engineering note:</strong> The baseline Uno budget exposes 6 PWM channels; a PWM count is not the same thing as six unrestricted output pins.</p></article>
+        <article class="lbr-trap-card" data-pin-board="all"><span class="lbr-chip">Any board</span><h4>5V signals need a voltage plan</h4><p>A 5V sensor output can be too high for a 3.3V controller input. Use a level shifter or a suitable divider before connecting the signal.</p><p class="eng-only lbr-technical-note"><strong>Engineering note:</strong> The HC-SR04 is listed as a 5.0V signal device; the TXS0108E is a copyable baseline remedy, not a guarantee for every bus.</p></article>
+      </div>
+      <a class="lbr-button lbr-button-primary" href="/forge/?preset=spiderbot-good">🔧 Load the Fix in Part Picker →</a>
+      <p class="lbr-filter-empty" hidden>No pin cards match that filter yet. Try All boards.</p>
+    </div>
+
+    <div class="lbr-trap-panel" role="tabpanel" id="trap-panel-i2c" aria-labelledby="trap-tab-i2c" data-trap-panel="i2c" hidden>
+      <div class="lbr-trap-intro"><span class="lbr-trap-number">03</span><div><h3>Motor Driver Guide</h3><p>The old red L298N drops roughly 2V as heat. TB6612FNG and BTS7960 MOSFET drivers waste less voltage and run cooler at full speed.</p></div></div>
+      <a class="lbr-button lbr-button-primary" href="/forge/?preset=conveyor">🔧 Load Modern Motor Driver Kit →</a>
+      <div class="lbr-i2c-callout"><div class="lbr-address-bubble">0x68</div><div><h4>MPU-6050 + DS3231: the classic collision</h4><p>Both baseline parts answer at <code>0x68</code>. For an MPU-6050, changing the AD0 connection can move it to <code>0x69</code>. Confirm the board’s breakout wiring and library settings before powering up.</p><p class="eng-only lbr-technical-note"><strong>Engineering note:</strong> This is an address remedy, not a voltage or power remedy. Keep the device supply and signal levels within their datasheet limits.</p></div></div>
+      <div class="lbr-two-col-note"><div><h4>Good first scan</h4><p>Connect one sensor, run an address scanner, and write down the result. Add the next sensor only after the first one is visible.</p></div><div><h4>Good first question</h4><p>“Which address does this exact breakout use?” Product names alone do not prove a board’s pull-ups or address straps.</p></div></div>
+    </div>
+  </section>
+
+  <p class="lbr-page-footnote"><span class="lbr-status-dot"></span> These are learning guardrails, not manufacturer certification. Check the datasheet for your exact board and part.</p>
+</div>
+
+<LearningPageInteractions />

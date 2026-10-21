@@ -1,0 +1,103 @@
+<script>
+  const trapTabs = Array.from(document.querySelectorAll<HTMLElement>('[data-trap-tab]'));
+  const trapPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-trap-panel]'));
+  trapTabs.forEach((tab) => tab.addEventListener('click', () => {
+    const selected = tab.dataset.trapTab;
+    trapTabs.forEach((item) => {
+      const active = item === tab;
+      item.classList.toggle('is-active', active);
+      item.setAttribute('aria-selected', String(active));
+    });
+    trapPanels.forEach((panel) => {
+      const active = panel.dataset.trapPanel === selected;
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+    });
+  }));
+
+  const pinCards = Array.from(document.querySelectorAll<HTMLElement>('[data-pin-board]'));
+  const emptyMessage = document.querySelector<HTMLElement>('.lbr-filter-empty');
+  document.querySelectorAll<HTMLElement>('[data-pin-filter]').forEach((filter) => filter.addEventListener('click', () => {
+    const selected = filter.dataset.pinFilter ?? 'all';
+    document.querySelectorAll<HTMLElement>('[data-pin-filter]').forEach((item) => {
+      const active = item === filter;
+      item.classList.toggle('is-active', active);
+      item.setAttribute('aria-pressed', String(active));
+    });
+    let visible = 0;
+    const statusGroups: Record<string, number[]> = { safe: [2, 3], adc1: [0], trap: [1], forbidden: [] };
+    pinCards.forEach((card, index) => {
+      const show = selected === 'all' || card.dataset.pinBoard === selected || card.dataset.pinBoard === 'all' || card.dataset.pinStatus === selected || (selected in statusGroups && statusGroups[selected].includes(index));
+      card.hidden = !show;
+      if (show) visible += 1;
+    });
+    if (emptyMessage) emptyMessage.hidden = visible !== 0;
+  }));
+
+  const roadmapKey = 'lbr-roadmap-progress';
+  const roadmapCards = Array.from(document.querySelectorAll<HTMLElement>('[data-roadmap-card]'));
+  const roadmapButtons = Array.from(document.querySelectorAll<HTMLElement>('[data-roadmap-toggle]'));
+  const count = document.querySelector<HTMLElement>('#roadmap-progress-count');
+  const bar = document.querySelector<HTMLElement>('#roadmap-progress-bar');
+  let completed = new Set();
+  try {
+    const saved = JSON.parse(localStorage.getItem(roadmapKey) || '[]');
+    if (Array.isArray(saved)) completed = new Set(saved);
+  } catch (_error) { completed = new Set(); }
+
+  const renderRoadmap = () => {
+    roadmapCards.forEach((card) => {
+      const id = card.dataset.roadmapCard;
+      const done = completed.has(id);
+      card.classList.toggle('is-complete', done);
+      const button = card.querySelector<HTMLElement>('[data-roadmap-toggle]');
+      if (button) {
+        button.setAttribute('aria-pressed', String(done));
+        if (button.firstChild) button.firstChild.textContent = done ? 'Understood ' : 'Mark understood ';
+      }
+    });
+    const total = roadmapCards.length;
+    const finished = completed.size;
+    if (count) count.textContent = `${finished} / ${total}`;
+    if (bar) bar.style.width = `${total ? (finished / total) * 100 : 0}%`;
+  };
+  roadmapButtons.forEach((button) => button.addEventListener('click', () => {
+    const id = button.dataset.roadmapToggle;
+    if (completed.has(id)) completed.delete(id); else completed.add(id);
+    localStorage.setItem(roadmapKey, JSON.stringify(Array.from(completed)));
+    renderRoadmap();
+  }));
+  document.querySelector('#roadmap-reset')?.addEventListener('click', () => {
+    completed.clear();
+    localStorage.removeItem(roadmapKey);
+    renderRoadmap();
+  });
+  renderRoadmap();
+
+  const configName = document.querySelector<HTMLInputElement>('#config-name');
+  const configBoard = document.querySelector<HTMLSelectElement>('#config-board');
+  const configGoal = document.querySelector<HTMLTextAreaElement>('#config-goal');
+  const configOutput = document.querySelector<HTMLElement>('#config-output');
+  const copyButton = document.querySelector<HTMLElement>('#copy-config');
+  const copyStatus = document.querySelector<HTMLElement>('#copy-status');
+  const createConfig = () => JSON.stringify({
+    project: configName?.value.trim() || 'my-robot-project',
+    board: configBoard?.value || 'Choose later',
+    challenge: 'The signal lantern',
+    goal: configGoal?.value.trim() || 'Describe one small, testable outcome.',
+    next_test: 'Write one observation before changing another variable.'
+  }, null, 2);
+  const renderConfig = () => { if (configOutput) configOutput.textContent = createConfig(); };
+  [configName, configBoard, configGoal].forEach((field) => field?.addEventListener('input', renderConfig));
+  configBoard?.addEventListener('change', renderConfig);
+  copyButton?.addEventListener('click', async () => {
+    const value = createConfig();
+    try {
+      await navigator.clipboard.writeText(value);
+      if (copyStatus) copyStatus.textContent = 'Copied to clipboard.';
+    } catch (_error) {
+      if (copyStatus) copyStatus.textContent = 'Select the template above and copy it manually.';
+    }
+  });
+  renderConfig();
+</script>

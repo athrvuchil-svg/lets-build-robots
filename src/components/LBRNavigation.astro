@@ -1,0 +1,23 @@
+---
+interface Props {
+  activeView?: string;
+}
+
+const { activeView = '' } = Astro.props;
+const tabs = [
+  { id: 'robots', label: 'Robots', href: '/robots/' },
+  { id: 'forge', label: 'Forge', href: '/forge/' },
+  { id: 'playground', label: 'Playground', href: '/playground/' },
+  { id: 'traps', label: 'Traps', href: '/traps/' },
+  { id: 'challenges', label: 'Challenges', href: '/challenges/' },
+  { id: 'roadmap', label: 'Roadmap', href: '/roadmap/' },
+];
+---
+
+<nav class="lbr-nav" aria-label="Main navigation">
+  {tabs.map((tab) => (
+    <a class:list={{ 'is-active': activeView === tab.id }} href={tab.href} aria-current={activeView === tab.id ? 'page' : undefined}>
+      {tab.label}
+    </a>
+  ))}
+</nav>

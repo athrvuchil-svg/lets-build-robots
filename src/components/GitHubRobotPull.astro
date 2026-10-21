@@ -1,0 +1,36 @@
+<section class="lbr-card lbr-github-pull" data-github-pull>
+  <div class="lbr-workspace-heading">
+    <div><p class="lbr-kicker">Real open-source pulls</p><h2>Browse robot code from GitHub</h2><p class="lbr-muted-copy">This panel calls GitHub's public API in your browser. It never pretends a repository is running here: open a repo to inspect the real source, license, and activity.</p></div>
+    <span class="lbr-local-badge">LIVE API</span>
+  </div>
+  <div class="lbr-github-toolbar"><label class="lbr-search-field"><span class="sr-only">Search GitHub repositories</span><input data-github-query value="robotics esp32" /><button class="lbr-button lbr-button-primary" type="button" data-github-search>Pull repositories</button></label><span class="lbr-muted-copy" data-github-status>Ready to pull public repositories.</span></div>
+  <div class="lbr-github-results" data-github-results><p class="lbr-muted-copy">Press “Pull repositories” to load current public results from GitHub.</p></div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-github-pull]');
+  const query = root?.querySelector<HTMLInputElement>('[data-github-query]');
+  const search = root?.querySelector<HTMLButtonElement>('[data-github-search]');
+  const status = root?.querySelector<HTMLElement>('[data-github-status]');
+  const results = root?.querySelector<HTMLElement>('[data-github-results]');
+  type GitHubRepo = { full_name: string; html_url: string; description: string | null; stargazers_count: number; language: string | null; updated_at: string; license?: { spdx_id?: string | null } | null };
+  const safe = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character] ?? character));
+  async function pull() {
+    const searchTerm = query?.value.trim() || 'robotics esp32';
+    if (status) status.textContent = 'Pulling current public results…';
+    if (search) search.disabled = true;
+    try {
+      const response = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(searchTerm)}&sort=stars&order=desc&per_page=6`, { headers: { Accept: 'application/vnd.github+json' } });
+      if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
+      const payload = await response.json();
+      const items: GitHubRepo[] = Array.isArray(payload.items) ? payload.items : [];
+      if (results) results.innerHTML = items.length ? items.map((repo) => `<article class="lbr-repo-card"><div><span class="lbr-chip">★ ${safe(repo.stargazers_count)}</span><span class="lbr-chip">${safe(repo.language || 'mixed')}</span></div><h3><a href="${safe(repo.html_url)}" target="_blank" rel="noreferrer">${safe(repo.full_name)}</a></h3><p>${safe(repo.description || 'No description published.')}</p><small>Updated ${new Date(repo.updated_at).toLocaleDateString()} · ${safe(repo.license?.spdx_id || 'license not detected')}</small></article>`).join('') : '<p class="lbr-muted-copy">GitHub returned no matching public repositories.</p>';
+      if (status) status.textContent = `${items.length} live result${items.length === 1 ? '' : 's'} pulled from GitHub.`;
+    } catch (error) {
+      if (status) status.textContent = 'The live pull failed; GitHub may be rate-limiting or offline.';
+      if (results) results.innerHTML = `<p class="lbr-rule lbr-rule-warn">${error instanceof Error ? error.message : 'Unknown network error'} Try again later or use GitHub directly.</p>`;
+    } finally { if (search) search.disabled = false; }
+  }
+  search?.addEventListener('click', pull);
+  query?.addEventListener('keydown', (event) => { if (event.key === 'Enter') pull(); });
+</script>

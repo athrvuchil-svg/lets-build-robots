@@ -1,0 +1,41 @@
+---
+title: Robotics Roadmap
+description: An eight-step beginner roadmap from web ideas to a small moving robot.
+---
+
+import TopUtilityBar from '../../components/TopUtilityBar.astro';
+import LearningPageInteractions from '../../components/LearningPageInteractions.astro';
+import '../../styles/custom.css';
+
+<div class="lbr-page lbr-roadmap-page">
+  <TopUtilityBar activeView="roadmap" />
+
+  <header class="lbr-page-hero lbr-roadmap-hero">
+    <div>
+      <p class="lbr-kicker">A route, not a race</p>
+      <h1>From web ideas to moving machines.</h1>
+      <p class="lbr-page-lede">Robotics feels smaller when each step has one job. Mark a card when you understand it, come back later, and let this browser remember your progress.</p>
+    </div>
+    <div class="lbr-progress-card" aria-live="polite"><span class="lbr-progress-label">Your progress</span><strong id="roadmap-progress-count">0 / 8</strong><div class="lbr-progress-track"><span id="roadmap-progress-bar"></span></div><button class="lbr-text-button" id="roadmap-reset" type="button">Reset progress</button></div>
+  </header>
+
+  <section class="lbr-roadmap-grid" aria-label="Eight-step robotics roadmap">
+    <article class="lbr-roadmap-card" data-roadmap-card="sense"><div class="lbr-roadmap-card-top"><span>01</span><span class="lbr-roadmap-icon">◌</span></div><h2>Notice the world</h2><p>Learn that a robot starts with a question: what can it sense, and what should it do next?</p><button class="lbr-complete-button" type="button" data-roadmap-toggle="sense" aria-pressed="false">Mark understood <span>✓</span></button></article>
+    <article class="lbr-roadmap-card" data-roadmap-card="signals"><div class="lbr-roadmap-card-top"><span>02</span><span class="lbr-roadmap-icon">⌁</span></div><h2>Speak in signals</h2><p>Translate a button, sensor, or joystick into a value your program can use.</p><button class="lbr-complete-button" type="button" data-roadmap-toggle="signals" aria-pressed="false">Mark understood <span>✓</span></button></article>
+    <article class="lbr-roadmap-card" data-roadmap-card="power"><div class="lbr-roadmap-card-top"><span>03</span><span class="lbr-roadmap-icon">↯</span></div><h2>Respect power</h2><p>Separate “the code is right” from “the supply can safely deliver the current.”</p><button class="lbr-complete-button" type="button" data-roadmap-toggle="power" aria-pressed="false">Mark understood <span>✓</span></button></article>
+    <article class="lbr-roadmap-card" data-roadmap-card="microcontroller"><div class="lbr-roadmap-card-top"><span>04</span><span class="lbr-roadmap-icon">▣</span></div><h2>Meet the controller</h2><p>Choose a board, find its pin map, and leave yourself one easy pin for debugging.</p><button class="lbr-complete-button" type="button" data-roadmap-toggle="microcontroller" aria-pressed="false">Mark understood <span>✓</span></button></article>
+    <article class="lbr-roadmap-card" data-roadmap-card="motion"><div class="lbr-roadmap-card-top"><span>05</span><span class="lbr-roadmap-icon">↗</span></div><h2>Make one thing move</h2><p>Start with a single servo or motor. Change one value, observe one result, and write it down.</p><button class="lbr-complete-button" type="button" data-roadmap-toggle="motion" aria-pressed="false">Mark understood <span>✓</span></button></article>
+    <article class="lbr-roadmap-card" data-roadmap-card="feedback"><div class="lbr-roadmap-card-top"><span>06</span><span class="lbr-roadmap-icon">◉</span></div><h2>Close the loop</h2><p>Use a sensor reading to decide whether the robot should keep moving, slow down, or stop.</p><button class="lbr-complete-button" type="button" data-roadmap-toggle="feedback" aria-pressed="false">Mark understood <span>✓</span></button></article>
+    <article class="lbr-roadmap-card" data-roadmap-card="debug"><div class="lbr-roadmap-card-top"><span>07</span><span class="lbr-roadmap-icon">⌘</span></div><h2>Debug kindly</h2><p>Change one variable at a time. A clear log is more useful than a lucky guess.</p><button class="lbr-complete-button" type="button" data-roadmap-toggle="debug" aria-pressed="false">Mark understood <span>✓</span></button></article>
+    <article class="lbr-roadmap-card" data-roadmap-card="share"><div class="lbr-roadmap-card-top"><span>08</span><span class="lbr-roadmap-icon">✦</span></div><h2>Share the build</h2><p>Explain what worked, what failed, and what you would test next so another beginner can learn too.</p><button class="lbr-complete-button" type="button" data-roadmap-toggle="share" aria-pressed="false">Mark understood <span>✓</span></button></article>
+  </section>
+
+  <section class="lbr-matrix-section" aria-labelledby="matrix-title">
+    <div class="lbr-section-heading"><div><p class="lbr-kicker">The bridge is real</p><h2 id="matrix-title">Web habit → robotics habit</h2></div><p class="lbr-section-note">Your existing web skills are useful. The materials and constraints simply change.</p></div>
+    <div class="lbr-matrix-wrap"><table class="lbr-matrix"><thead><tr><th scope="col">On the web</th><th scope="col">In a robot</th><th scope="col">Tiny practice</th></tr></thead><tbody><tr><td>Listen for a click</td><td>Read a sensor change</td><td>Make an LED react to one button.</td></tr><tr><td>Manage state</td><td>Remember a mode or target</td><td>Toggle between “search” and “stop”.</td></tr><tr><td>Use an API contract</td><td>Respect a pin and voltage contract</td><td>Write down each part’s signal level first.</td></tr><tr><td>Handle an error</td><td>Stop safely when a reading is odd</td><td>Add a timeout before a motor command.</td></tr><tr><td>Iterate on a UI</td><td>Tune movement by observation</td><td>Change one servo angle at a time.</td></tr></tbody></table></div>
+  </section>
+
+  <p class="lbr-page-footnote"><span class="lbr-status-dot"></span> Progress is saved only in this browser using localStorage. No account or sync is involved.</p>
+</div>
+
+<LearningPageInteractions />

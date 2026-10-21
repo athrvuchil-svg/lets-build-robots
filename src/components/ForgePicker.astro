@@ -1,49 +1,62 @@
 ---
 import components from '../data/components.json';
+const groups: [string, string[]][] = [
+  ['1. Robot Brains (Microcontrollers)', ['esp32-devkit-v1', 'arduino-uno-r3']],
+  ['2. Motors & Joints', ['mg90s-servo-x4', 'mg90s-servo-x12', 'dc-gearmotor-12v']],
+  ['3. Power & Motor Controllers', ['pca9685-16ch', 'buck-5v-8a', 'l298n-driver', 'tb6600-driver', 'lipo-2s-2200', 'bat-9v-alkaline']],
+  ['4. Sensors & Adapters', ['mpu6050-imu', 'ds3231-rtc-0x68', 'hcsr04-5v', 'txs0108e-shifter']],
+];
+const presets = {
+  'spiderbot-good': ['esp32-devkit-v1', 'mg90s-servo-x12', 'pca9685-16ch', 'buck-5v-8a', 'lipo-2s-2200', 'mpu6050-imu'],
+  'spiderbot-bad': ['esp32-devkit-v1', 'mg90s-servo-x12', 'bat-9v-alkaline', 'hcsr04-5v'],
+  conveyor: ['esp32-devkit-v1', 'dc-gearmotor-12v', 'tb6600-driver', 'lipo-2s-2200', 'hcsr04-5v', 'txs0108e-shifter'],
+  'esp32-safe': ['esp32-devkit-v1', 'mpu6050-imu', 'hcsr04-5v', 'txs0108e-shifter', 'lipo-2s-2200', 'buck-5v-8a'],
+  clear: [],
+};
 ---
 
-<div class="not-content grid gap-6 lg:grid-cols-[1.15fr_.85fr]" data-forge>
-  <section class="lbr-card p-5">
-    <div class="mb-5 flex items-start justify-between gap-4"><div><p class="lbr-kicker">Deterministic safety check</p><h2 class="text-2xl font-bold">Choose your parts</h2><p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Pick a budget path yourself. LBR explains the trade-offs instead of hiding them.</p></div><span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-700">15 baseline parts</span></div>
-    <div class="mb-5 flex flex-wrap gap-2" data-presets><button type="button" class="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold" data-preset="sensor">Low-cost sensor</button><button type="button" class="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold" data-preset="safe">Safer starter</button><button type="button" class="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold" data-preset="clear">Clear all</button></div>
-    <div class="grid gap-3 sm:grid-cols-2">{components.map((component) => <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-200 p-3 transition hover:border-orange-400 has-[:checked]:border-orange-600 has-[:checked]:bg-orange-50 dark:border-zinc-700 dark:has-[:checked]:bg-orange-950/30"><input type="checkbox" value={component.id} class="mt-1 accent-orange-600" data-part /><span><strong class="block text-sm">{component.part}</strong><small class="block text-xs text-zinc-500" data-price data-in={`₹${component.in.price}`} data-us={`$${component.us.price.toFixed(2)}`}>Robu.in · ₹{component.in.price}</small><span class="eng-only-inline font-mono text-[10px]"> · {component.kind}</span></span></label>)}</div>
-  </section>
-  <aside class="lbr-card p-5" aria-live="polite"><p class="lbr-kicker">Build report</p><h2 class="text-2xl font-bold">Your robot needs...</h2><div data-report class="mt-4 space-y-3"></div></aside>
+<div class="not-content" data-forge>
+  <div class="lbr-forge-toolbar"><div><p class="lbr-kicker">PCPartPicker for robots</p><h2 class="text-2xl font-bold">Choose your budget path</h2><p class="lbr-muted-copy">There is more than one way to build. LBR shows the trade-offs and the unsafe shortcuts.</p></div><label class="lbr-switch"><input type="checkbox" checked data-wifi /><span>Using Wi-Fi / phone control</span></label></div>
+  <div class="mb-5 flex flex-wrap gap-2" data-presets><button class="lbr-preset-button" data-preset="spiderbot-good">✅ Load Working Spiderbot Kit</button><button class="lbr-preset-button" data-preset="spiderbot-bad">⚠️ See Common Beginner Mistake</button><button class="lbr-preset-button" data-preset="conveyor">⚙️ Load Conveyor Kit</button><button class="lbr-preset-button" data-preset="esp32-safe">📡 Safe ESP32 Starter Kit</button><button class="lbr-preset-button" data-preset="clear">↺ Clear</button></div>
+  <div class="grid gap-6 lg:grid-cols-[1.25fr_.75fr]">
+    <section class="space-y-5">{groups.map(([title, ids]) => <div class="lbr-card p-5"><p class="lbr-kicker">{title}</p><div class="mt-3 grid gap-3 sm:grid-cols-2">{ids.map((id) => { const component = components.find((item) => item.id === id); return component && <label class="lbr-part-card"><input type="checkbox" value={component.id} data-part /><span><strong>{component.part}</strong><small data-price data-in={`${component.in.store} · ₹${component.in.price}`} data-us={`${component.us.store} · $${component.us.price.toFixed(2)}`}>{component.in.store} · ₹{component.in.price}</small><span class="eng-only-inline font-mono text-[10px]">{component.kind}</span></span></label>; })}</div></div>)}</section>
+    <aside class="lbr-card lbr-build-report" aria-live="polite"><div class="flex items-center justify-between"><div><p class="lbr-kicker">Build report</p><h2 class="text-2xl font-bold">Know before you wire</h2></div><span data-status-badge class="lbr-status-badge">READY</span></div><div class="lbr-metric-grid" data-metrics></div><div class="mt-4 space-y-2" data-rules></div><div class="mt-5" data-bom></div><button class="lbr-button lbr-button-primary mt-4" type="button" data-copy-bom>📋 Copy Shopping List</button></aside>
+  </div>
 </div>
 
-<script define:vars={{ components }}>
+<script define:vars={{ components, presets }}>
   const root = document.querySelector('[data-forge]');
-  const report = root?.querySelector('[data-report]');
   const inputs = [...(root?.querySelectorAll<HTMLInputElement>('[data-part]') ?? [])];
-  let country = localStorage.getItem('lbr-country') === 'US' ? 'US' : 'IN';
-  const find = (id) => components.find((part) => part.id === id);
-  const format = (value) => country === 'US' ? `$${value.toFixed(2)}` : `₹${value.toFixed(0)}`;
-  const shipping = () => country === 'US' ? { threshold: 35, fee: 5.99, label: 'free shipping at $35' } : { threshold: 500, fee: 60, label: 'Robu.in free shipping at ₹500' };
-  function message(kind, text) { const colors = { bad: 'border-red-300 bg-red-50 text-red-800', warn: 'border-amber-300 bg-amber-50 text-amber-800', good: 'border-emerald-300 bg-emerald-50 text-emerald-800', info: 'border-cyan-300 bg-cyan-50 text-cyan-900', neutral: 'border-zinc-200 bg-zinc-50 text-zinc-700' }; return `<div class="rounded-lg border p-3 text-sm ${colors[kind] ?? colors.neutral}">${text}</div>`; }
+  const metrics = root?.querySelector('[data-metrics]'); const rules = root?.querySelector('[data-rules]'); const bom = root?.querySelector('[data-bom]'); const badge = root?.querySelector('[data-status-badge]');
+  let region = localStorage.getItem('lbr-region') === 'US' ? 'US' : 'IN';
+  const format = (n) => region === 'US' ? `$${n.toFixed(2)}` : `₹${n.toFixed(0)}`;
+  const selected = () => components.filter((part) => inputs.some((input) => input.checked && input.value === part.id));
+  const card = (kind, text) => `<div class="lbr-rule lbr-rule-${kind}">${text}</div>`;
   function update() {
-    const chosen = components.filter((part) => inputs.some((input) => input.checked && input.value === part.id));
-    const stall = chosen.reduce((sum, part) => sum + part.stallA, 0);
-    const pwm = chosen.reduce((sum, part) => sum + part.pwm, 0);
-    const total = chosen.reduce((sum, part) => sum + (country === 'US' ? part.us.price : part.in.price), 0);
-    const ids = new Set(chosen.map((part) => part.id)); const hasEsp = ids.has('esp32-devkit-v1'); const hasArduino = ids.has('arduino-uno-r3'); const has5v = ids.has('hcsr04-5v'); const hasShift = ids.has('txs0108e-shifter'); const hasPca = ids.has('pca9685-16ch'); const buck = find('buck-5v-8a'); const hasBuck = ids.has('buck-5v-8a');
-    const addresses = chosen.filter((part) => part.i2c).map((part) => part.i2c); const clash = addresses.some((address, index) => addresses.indexOf(address) !== index); const checks = [];
-    if (!chosen.length) checks.push(['neutral', 'Pick a controller and parts. The report will separate facts, warnings, and budget trade-offs.']);
-    if (chosen.length) checks.push(['good', `${chosen.length} parts · ${format(total)} before shipping · ${pwm} PWM channels`]);
-    if (stall) checks.push(['info', `Peak stall total: ${stall.toFixed(2)}A · supply headroom target: ${(stall * 1.25).toFixed(2)}A.`]);
-    if (stall > 0.6 && !hasBuck) checks.push(['bad', 'Board Reset Danger: motor/servo demand is above the 0.6A onboard 5V guard. Use an external regulator and common ground.']);
-    if (hasBuck && stall * 1.25 > buck.max5vA) checks.push(['bad', `Regulator capacity warning: required ${ (stall * 1.25).toFixed(2) }A exceeds this buck regulator's 8A rating.`]);
-    if (pwm >= 8 && !hasPca) checks.push(['warn', 'PWM channel warning: add the PCA9685 16-channel driver.']);
-    if (hasEsp && has5v && !hasShift) checks.push(['bad', 'Pin Burn Risk: HC-SR04 is a 5V signal. Add the TXS0108E level shifter before connecting it to an ESP32.']);
-    if (clash) checks.push(['bad', 'I2C address clash at 0x68: connect MPU-6050 AD0 to 3.3V to move it to 0x69.']);
-    if (hasEsp) checks.push(['info', 'ESP32 pin traps: Wi-Fi disables ADC2 (GPIO 4, 13, 14, 25–27); prefer ADC1 GPIO 32–39. GPIO 0/12 are boot strap pins and GPIO 34–39 are input-only.']);
-    if (ids.has('l298n-driver') && ids.has('dc-gearmotor-12v')) checks.push(['warn', 'Budget trade-off: L298N is a lossy BJT driver. It may waste voltage as heat; the MOSFET driver is the cleaner option.']);
-    if (hasArduino && stall > 0.5 && !hasBuck) checks.push(['bad', 'Arduino 5V rail guard: this selection can exceed the Uno 0.5A 5V output. Power motors/servos separately.']);
-    const ship = shipping(); if (chosen.length && total < ship.threshold) checks.push(['info', `${ship.label}: gap ${format(ship.threshold - total)} · estimated delivery fee ${format(ship.fee)}.`]); else if (chosen.length) checks.push(['good', `Shipping threshold reached for this ${country} basket.`]);
-    if (report) report.innerHTML = checks.map(([kind, text]) => message(kind, text)).join('');
-    root?.querySelectorAll<HTMLElement>('[data-price]').forEach((price) => { price.textContent = country === 'US' ? `Amazon/global · ${price.dataset.us}` : `India listing · ${price.dataset.in}`; });
+    const parts = selected(); const ids = new Set(parts.map((part) => part.id)); const mcu = parts.find((part) => part.kind === 'MCU'); const batteries = parts.filter((part) => part.kind === 'battery');
+    const totalStallA = parts.reduce((sum, part) => sum + part.stallA, 0); const servoStallA = parts.filter((part) => part.kind === 'servo').reduce((sum, part) => sum + part.stallA, 0); const pwmNeeded = parts.reduce((sum, part) => sum + part.pwm, 0); const pwmAvailable = (mcu?.pwm ?? 0) + (ids.has('pca9685-16ch') ? 16 : 0); const maxBatteryA = batteries.length ? Math.max(...batteries.map((part) => part.stallA)) : 0; const requiredSupplyA = totalStallA * 1.25; const weight = parts.reduce((sum, part) => sum + part.weightG, 110); const hasClash = ids.has('mpu6050-imu') && ids.has('ds3231-rtc-0x68');
+    const failures = []; const warnings = []; const ok = [];
+    if (!mcu) failures.push('🛑 No Robot Brain Selected: Pick an ESP32 or Arduino Uno first.');
+    if (totalStallA && requiredSupplyA > maxBatteryA) failures.push(`🛑 Weak Battery Warning: Your motors need ${requiredSupplyA.toFixed(1)}A, but the selected battery only gives ${maxBatteryA.toFixed(1)}A max. Switch to the 7.4V LiPo Battery.`); else if (totalStallA) ok.push('✅ Battery Power OK');
+    if (servoStallA > 0.6 && !ids.has('buck-5v-8a')) failures.push(`🛑 Board Reset Danger: Your servos pull ${servoStallA.toFixed(1)}A, which will overload your board's tiny 0.6A pin. Add the 5V 8A Heavy-Duty Power Regulator.`); else ok.push('✅ Servo Power Safe');
+    if (pwmNeeded >= 8 && !ids.has('pca9685-16ch')) warnings.push(`⚠️ Too Many Motor Wires (${pwmNeeded} channels): Add the PCA9685 16-channel Motor Controller Board.`); else ok.push('✅ Clean Wiring');
+    if (ids.has('esp32-devkit-v1') && ids.has('hcsr04-5v') && !ids.has('txs0108e-shifter')) failures.push('🛑 Pin Burn Risk: The HC-SR04 sensor sends 5V into your 3.3V ESP32. Add the 5V-to-3.3V Safe Pin Adapter.');
+    if (region === 'US' && ids.has('esp32-devkit-v1')) warnings.push('📡 Wi-Fi ADC2 Tip: use ADC1 GPIO 32–39 for analog sensors while Wi-Fi is on.');
+    if (region === 'IN' && ids.has('esp32-devkit-v1')) warnings.push('📡 Wi-Fi ADC2 Tip: use ADC1 GPIO 32–39; GPIO 0/12 are startup traps and GPIO 34–39 are input-only.');
+    if (hasClash) failures.push('🛑 Conflict 0x68: MPU-6050 and DS3231 share the address. Pull MPU-6050 AD0 to 3.3V to switch it to 0x69.'); else ok.push('✅ I2C Addresses Clear');
+    if (ids.has('l298n-driver')) warnings.push('🔥 L298N Heat Warning: the old BJT driver drops voltage as heat; TB6612FNG/BTS7960 MOSFET drivers run cooler.');
+    const total = parts.reduce((sum, part) => sum + (region === 'US' ? part.us.price : part.in.price), 0); const threshold = region === 'US' ? 35 : 500; const shipping = total < threshold ? (region === 'US' ? 5.99 : 60) : 0;
+    if (parts.length && total < threshold) warnings.push(`🚚 ${region === 'US' ? 'USA' : 'Robu.in'} cart is ${format(total)} — add ${format(threshold - total)} more to get FREE delivery!`);
+    if (badge) { badge.textContent = failures.length ? '🛑 NEEDS FIXES' : warnings.length ? '⚠️ CHECK TIPS' : '✅ READY TO BUILD'; badge.className = `lbr-status-badge ${failures.length ? 'is-bad' : warnings.length ? 'is-warn' : 'is-good'}`; }
+    if (metrics) metrics.innerHTML = `<div><strong>POWER NEEDED</strong><b>${totalStallA.toFixed(1)} A</b><small>Battery: ${maxBatteryA.toFixed(1)} A max</small></div><div><strong>ROBOT WEIGHT</strong><b>${weight} g</b><small>Includes +110g frame</small></div><div><strong>MOTOR PINS</strong><b>${pwmNeeded} / ${pwmAvailable || 0}</b><small>Sensors: ${hasClash ? 'Conflict 0x68' : 'OK'}</small></div>`;
+    if (rules) rules.innerHTML = [...failures.map((text) => card('bad', text)), ...warnings.map((text) => card('warn', text)), ...ok.map((text) => card('good', text))].join('') || card('neutral', 'Select a preset or parts to generate the six-rule report.');
+    if (bom) bom.innerHTML = `<h3 class="text-lg font-bold">Shopping List</h3><div class="lbr-bom-table">${parts.map((part) => `<div><span>${part.part}</span><b>${format(region === 'US' ? part.us.price : part.in.price)}</b></div>`).join('') || '<p class="lbr-muted-copy">No parts selected yet.</p>'}</div><div class="lbr-bom-total"><span>Grand total + shipping</span><b>${format(total + shipping)}</b></div>${shipping ? `<small class="lbr-muted-copy">Estimated shipping: ${format(shipping)} unless you reach ${format(threshold)}.</small>` : '<small class="lbr-muted-copy">Free shipping threshold reached for this basket.</small>'}`;
+    root?.querySelectorAll<HTMLElement>('[data-price]').forEach((node) => { node.textContent = region === 'US' ? node.dataset.us ?? '' : node.dataset.in ?? ''; });
   }
-  root?.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) => button.addEventListener('click', () => { const preset = button.dataset.preset; inputs.forEach((input) => { input.checked = preset === 'safe' ? ['esp32-devkit-v1','mg90s-servo-x4','pca9685-16ch','buck-5v-8a','lipo-2s-2200'].includes(input.value) : preset === 'sensor' ? ['esp32-devkit-v1','mpu6050-imu','hcsr04-5v','txs0108e-shifter'].includes(input.value) : false; }); update(); }));
-  inputs.forEach((input) => input.addEventListener('change', update));
-  window.addEventListener('lbr:country-change', (event) => { country = event.detail === 'US' ? 'US' : 'IN'; update(); });
-  update();
+  function applyPreset(name) { const ids = presets[name] ?? []; inputs.forEach((input) => { input.checked = ids.includes(input.value); }); update(); }
+  root?.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) => button.addEventListener('click', () => applyPreset(button.dataset.preset ?? 'clear')));
+  inputs.forEach((input) => input.addEventListener('change', update)); root?.querySelector('[data-wifi]')?.addEventListener('change', update);
+  window.addEventListener('lbr:region-change', (event) => { region = event.detail === 'US' ? 'US' : 'IN'; update(); }); window.addEventListener('lbr:country-change', (event) => { region = event.detail === 'US' ? 'US' : 'IN'; update(); });
+  root?.querySelector('[data-copy-bom]')?.addEventListener('click', async () => { const text = selected().map((part) => `${part.part} — ${format(region === 'US' ? part.us.price : part.in.price)}`).join('\n'); await navigator.clipboard?.writeText(text || 'No parts selected'); });
+  const query = new URLSearchParams(location.search).get('preset'); applyPreset(query && presets[query] ? query : 'spiderbot-good');
 </script>
