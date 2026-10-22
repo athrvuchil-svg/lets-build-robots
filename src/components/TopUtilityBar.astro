@@ -1,96 +1,43 @@
 ---
 import LBRNavigation from './LBRNavigation.astro';
-
+import components from '../data/components.json';
 const { activeView = '' } = Astro.props;
+const searchIndex = [
+  ...components.map((part) => [`📦 ${part.part}`, `/components/`, `component · ${part.role} · ${part.logicV ?? ''}V · ${part.i2c ?? ''}`]),
+  ...['GPIO 21 / 22 · default I²C', 'GPIO 32 / 33 · ADC1 sensors', 'GPIO 34 / 35 · input-only ADC1', 'GPIO 0 · boot strap', 'GPIO 12 · startup strap', 'GPIO 4 / 13 · ADC2 with Wi-Fi', '5V Echo · TXS0108E protection'].map((pin) => [`📍 ${pin}`, `/traps/`, 'ESP32 pin guide']),
+  ...['bmoGfBe63ZA · Arduino Hexapod', 'iLIIuMj-77w · Walking Arduino Hexapod', 'u-U2VmCW-e8 · Hexapod from Scratch', '_B3gWd3A_SI · DIY Arduino Robot Arm', 'c6mrcNEFBoA · Robot Arm with Arduino', 'GDnmAI_7lOk · PCA9685 Servo Driver', 'zxBC1ivOVfM · Servos with ESP32', 'QoNkpnpvEqc · Fast PID Line Follower', '6l9DWqb77KI · Wokwi Simulation', 'laWn7_cj434 · Gazebo and ROS'].map((video) => [`🎥 ${video}`, `/tools/#videos`, 'video library']),
+];
 ---
 
 <header class="lbr-shell-header lbr-card" data-active-view={activeView}>
-  <div class="lbr-utility-row">
-    <div class="lbr-utility-message"><span class="lbr-new-badge">NEW</span><span>Try real GitHub robots live in your browser—zero Linux or hardware needed.</span>
-      <span class="eng-only-inline lbr-ram-badge" id="lbr-ram-badge">Active Sim: None (0 MB RAM)</span>
-    </div>
-    <div class="lbr-utility-controls">
-      <span class="eng-only-inline lbr-ram-badge" title="Local tools only; no remote simulator is loaded">RAM · 0 MB idle</span>
-      <label class="lbr-control">
-        <span class="sr-only">Experience mode</span>
-        <select id="lbr-mode" aria-label="Experience mode">
-          <option value="beginner">🌱 Beginner View (Simple)</option>
-          <option value="engineer">⚙️ Engineer View (Full Specs)</option>
-        </select>
-      </label>
-      <label class="lbr-control">
-        <span class="sr-only">Shopping region</span>
-        <select id="region-select" aria-label="Shopping region">
-          <option value="IN">🇮🇳 India (₹ INR)</option>
-          <option value="US">🇺🇸 USA &amp; Global ($ USD)</option>
-        </select>
-      </label>
-      <button id="lbr-theme-toggle" class="lbr-icon-button" type="button" aria-label="Switch to dark mode" aria-pressed="false">☾</button>
-      <button id="lbr-close-sim" class="lbr-close-button" type="button" hidden>⏹ Close Running Sim</button>
-    </div>
-  </div>
-
+  <div class="lbr-utility-row"><div class="lbr-utility-message"><span class="lbr-new-badge">NEW</span><span>Try real GitHub robots live in your browser—zero Linux or hardware needed.</span><span class="eng-only-inline lbr-ram-badge" id="lbr-ram-badge">Active Sim: None (0 MB RAM)</span></div><div class="lbr-utility-controls"><button class="lbr-utility-button" id="lbr-search-open" type="button">⌘K / Ctrl+K Search</button><button class="lbr-utility-button" id="lbr-saved-open" type="button">★ Saved (0)</button><button class="lbr-utility-button" id="mode-toggle-btn" type="button" aria-pressed="false">🌱 Beginner View</button><label class="lbr-control"><span class="sr-only">Shopping region</span><select id="region-select" aria-label="Shopping region"><option value="IN">🇮🇳 India (₹ INR)</option><option value="US">🇺🇸 USA &amp; Global ($ USD)</option></select></label><button id="theme-toggle-btn" class="lbr-icon-button" type="button" aria-label="Switch to dark mode" aria-pressed="false">🌗</button><a class="lbr-utility-button" href="https://github.com/athrvuchil-svg/lets-build-robots" target="_blank" rel="noopener noreferrer">⭐ GitHub ↗</a><button id="global-kill-island-btn" class="lbr-close-button" type="button" hidden>⏹ Close Running Sim</button></div></div>
   <LBRNavigation activeView={activeView} />
+  <script type="application/json" data-search-index set:html={JSON.stringify(searchIndex)}></script>
+  <div class="lbr-command-modal" data-search-modal hidden><div class="lbr-command-dialog" role="dialog" aria-modal="true" aria-labelledby="command-title"><div class="lbr-command-head"><div><p class="lbr-kicker">LBR command search</p><h2 id="command-title">Find a simulator, calculator, part, pin, or guide</h2></div><button type="button" data-search-close>Esc</button></div><input type="search" placeholder="Try PCA9685, PID, GPIO 34, battery…" data-command-input autofocus /><ul data-command-results></ul></div></div>
+  <aside class="lbr-saved-drawer" data-saved-drawer hidden><div class="lbr-command-head"><div><p class="lbr-kicker">Saved toolkit</p><h2>Your shortcuts</h2></div><button type="button" data-saved-close>Close</button></div><div data-saved-list></div></aside>
 </header>
 
 <script>
+  // @ts-nocheck
   import { clearActiveIsland } from '../utils/islandRegistry';
-
-  const mode = document.querySelector<HTMLSelectElement>('#lbr-mode');
-  const region = document.querySelector<HTMLSelectElement>('#region-select');
-  const themeToggle = document.querySelector<HTMLButtonElement>('#lbr-theme-toggle');
-  const closeSim = document.querySelector<HTMLButtonElement>('#lbr-close-sim');
-  const ramBadge = document.querySelector<HTMLElement>('#lbr-ram-badge');
-
-  const savedMode = localStorage.getItem('lbr-mode');
-  const savedRegion = localStorage.getItem('lbr-region') ?? localStorage.getItem('lbr-country');
-  const savedTheme = localStorage.getItem('lbr-theme');
-  if (savedMode === 'engineer' || savedMode === 'beginner') {
-    if (mode) mode.value = savedMode;
-    document.body.classList.toggle('engineer-mode', savedMode === 'engineer');
-  }
-  if (savedRegion === 'IN' || savedRegion === 'US') {
-    if (region) region.value = savedRegion;
-    document.documentElement.dataset.region = savedRegion;
-    document.documentElement.dataset.country = savedRegion;
-  }
-
-  function setTheme(theme: 'light' | 'dark') {
-    const isDark = theme === 'dark';
-    document.documentElement.classList.toggle('dark', isDark);
-    if (themeToggle) {
-      themeToggle.textContent = isDark ? '☀' : '☾';
-      themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-      themeToggle.setAttribute('aria-pressed', String(isDark));
-    }
-    localStorage.setItem('lbr-theme', theme);
-  }
-
-  if (savedTheme === 'dark' || savedTheme === 'light') setTheme(savedTheme);
-
-  mode?.addEventListener('change', () => {
-    document.body.classList.toggle('engineer-mode', mode.value === 'engineer');
-    localStorage.setItem('lbr-mode', mode.value);
-  });
-
-  region?.addEventListener('change', () => {
-    document.documentElement.dataset.region = region.value;
-    document.documentElement.dataset.country = region.value;
-    localStorage.setItem('lbr-region', region.value);
-    window.dispatchEvent(new CustomEvent('lbr:region-change', { detail: region.value }));
-    // Keep the existing Forge listener working while consumers migrate to the region event.
-    window.dispatchEvent(new CustomEvent('lbr:country-change', { detail: region.value }));
-  });
-
-  themeToggle?.addEventListener('click', () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark'));
-  closeSim?.addEventListener('click', clearActiveIsland);
-
-  function syncActiveTool() {
-    const name = window.__LBR_ACTIVE_TOOL_NAME__;
-    if (ramBadge) ramBadge.textContent = `Active Sim: ${name ? `${name} (≈ active)` : 'None (0 MB RAM)'}`;
-    if (closeSim) closeSim.hidden = !name;
-  }
-  window.addEventListener('lbr:active-tool-change', syncActiveTool);
-  window.setInterval(syncActiveTool, 500);
-  syncActiveTool();
+  const github = 'https://github.com/athrvuchil-svg/lets-build-robots';
+  const mode = document.querySelector('#mode-toggle-btn'); const region = document.querySelector('#region-select'); const theme = document.querySelector('#theme-toggle-btn'); const kill = document.querySelector('#global-kill-island-btn'); const badge = document.querySelector('#lbr-ram-badge'); const modal = document.querySelector('[data-search-modal]'); const drawer = document.querySelector('[data-saved-drawer]'); const input = document.querySelector('[data-command-input]'); const results = document.querySelector('[data-command-results]'); const savedCount = document.querySelector('#lbr-saved-open');
+  const staticEntries = [
+    ['🐾 4-Legged Spiderbot', '/robots/', 'simulator · 12 servo gait + power test'], ['🦾 6-DOF Desktop Arm', '/robots/', 'simulator · inverse kinematics'], ['🏎️ PID Line Follower', '/robots/', 'simulator · Kp / Kd / obstacle'], ['📡 Radar + Conveyor', '/robots/', 'simulator · ADC1 / ADC2 + driver heat'],
+    ['🔋 Battery runtime calculator', '/tools/#battery', 'calculator'], ['🦾 Servo torque calculator', '/tools/#torque', 'calculator'], ['⚡ Logic divider calculator', '/tools/#divider', 'calculator'], ['⚙️ Stepper steps/mm calculator', '/tools/#stepper', 'calculator'], ['🔌 I²C address scanner', '/tools/#i2c', 'calculator'], ['🛞 Wheel speed calculator', '/tools/#wheel', 'calculator'],
+    ['📦 Hardware component catalog', '/components/', '23 components'], ['🛒 The Forge part picker', '/forge/?preset=spiderbot-good', 'safe default preset'], ['💡 ESP32 pin guide', '/traps/', '8-row filterable pin table'], ['🦾 3D Leg & Arm Lab', '/playground/', 'pose-to-code'], ['🗺️ Roadmap & challenges', '/roadmap/', 'skill tree'],
+  ];
+  const readSaved = () => { try { return JSON.parse(localStorage.getItem('lbr-saved-tools') || '[]'); } catch { return []; } }; const writeSaved = (items) => { localStorage.setItem('lbr-saved-tools', JSON.stringify(items)); renderSaved(); };
+  function setTheme(value) { const dark = value === 'dark'; document.documentElement.classList.toggle('dark', dark); localStorage.setItem('lbr-theme', value); theme?.setAttribute('aria-pressed', String(dark)); }
+  const savedTheme = localStorage.getItem('lbr-theme'); if (savedTheme === 'dark' || savedTheme === 'light') setTheme(savedTheme); const savedRegion = localStorage.getItem('lbr-region'); if (savedRegion === 'IN' || savedRegion === 'US') { region.value = savedRegion; document.documentElement.dataset.region = savedRegion; }
+  const engineer = localStorage.getItem('lbr-mode') === 'engineer'; document.body.classList.toggle('engineer-mode', engineer); if (mode) { mode.textContent = engineer ? '⚙️ Engineer View' : '🌱 Beginner View'; mode.setAttribute('aria-pressed', String(engineer)); }
+  mode?.addEventListener('click', () => { const next = !document.body.classList.contains('engineer-mode'); document.body.classList.toggle('engineer-mode', next); localStorage.setItem('lbr-mode', next ? 'engineer' : 'beginner'); mode.textContent = next ? '⚙️ Engineer View' : '🌱 Beginner View'; mode.setAttribute('aria-pressed', String(next)); });
+  region?.addEventListener('change', () => { localStorage.setItem('lbr-region', region.value); document.documentElement.dataset.region = region.value; window.dispatchEvent(new CustomEvent('lbr:region-change', { detail: region.value })); window.dispatchEvent(new CustomEvent('lbr:country-change', { detail: region.value })); }); theme?.addEventListener('click', () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark')); kill?.addEventListener('click', clearActiveIsland);
+  function syncActive() { const name = window.__LBR_ACTIVE_TOOL_NAME__; if (badge) badge.textContent = `Active Sim: ${name ? `${name} (≈ active)` : 'None (0 MB RAM)'}`; if (kill) kill.hidden = !name; }
+  window.addEventListener('lbr:active-tool-change', syncActive); syncActive();
+  function searchableEntries() { const dynamic = [...document.querySelectorAll('[data-search-item]')].map((node) => [node.textContent?.trim() || 'LBR item', node.getAttribute('href') || '#', node.getAttribute('data-search-meta') || 'page']); const index = JSON.parse(document.querySelector('[data-search-index]')?.textContent || '[]'); return [...staticEntries, ...index, ...dynamic]; }
+  function renderResults() { const term = (input?.value || '').trim().toLowerCase(); const matches = searchableEntries().filter(([name, href, meta]) => `${name} ${meta}`.toLowerCase().includes(term)).slice(0, 20); if (results) results.innerHTML = matches.length ? matches.map(([name, href, meta]) => `<li><a href="${href}"><strong>${name}</strong><small>${meta}</small></a><button type="button" data-save-search="${encodeURIComponent(name)}" data-save-href="${href}">☆</button></li>`).join('') : '<li class="lbr-search-empty">No match. Try “servo”, “GPIO”, or “PID”.</li>'; results?.querySelectorAll('[data-save-search]').forEach((button) => button.addEventListener('click', () => { const items = readSaved().filter((item) => item.name !== decodeURIComponent(button.dataset.saveSearch)); items.unshift({ name: decodeURIComponent(button.dataset.saveSearch), href: button.dataset.saveHref }); writeSaved(items); button.textContent = '★'; })); }
+  function openSearch() { if (modal) modal.hidden = false; input?.focus(); renderResults(); } function closeSearch() { if (modal) modal.hidden = true; } document.querySelector('#lbr-search-open')?.addEventListener('click', openSearch); document.querySelector('[data-search-close]')?.addEventListener('click', closeSearch); input?.addEventListener('input', renderResults); modal?.addEventListener('click', (event) => { if (event.target === modal) closeSearch(); }); document.addEventListener('keydown', (event) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openSearch(); } if (event.key === 'Escape') { closeSearch(); if (drawer) drawer.hidden = true; } });
+  function renderSaved() { const items = readSaved(); if (savedCount) savedCount.textContent = `★ Saved (${items.length})`; const list = document.querySelector('[data-saved-list]'); if (list) list.innerHTML = items.length ? items.map((item) => `<div class="lbr-saved-row"><a href="${item.href}">${item.name}</a><button type="button" data-remove-saved="${encodeURIComponent(item.name)}">×</button></div>`).join('') : '<p class="lbr-muted-copy">Save a tool from Command Search and it will stay in this browser.</p>'; list?.querySelectorAll('[data-remove-saved]').forEach((button) => button.addEventListener('click', () => writeSaved(readSaved().filter((item) => item.name !== decodeURIComponent(button.dataset.removeSaved))))); }
+  document.querySelector('#lbr-saved-open')?.addEventListener('click', () => { if (drawer) drawer.hidden = false; renderSaved(); }); document.querySelector('[data-saved-close]')?.addEventListener('click', () => { if (drawer) drawer.hidden = true; }); renderSaved();
 </script>

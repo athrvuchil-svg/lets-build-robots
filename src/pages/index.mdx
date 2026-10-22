@@ -7,6 +7,7 @@ template: splash
 import TopUtilityBar from '../components/TopUtilityBar.astro';
 import SponsorSlot from '../components/SponsorSlot.astro';
 import LocalQuestionBox from '../components/LocalQuestionBox.astro';
+import LocalSimulatorWorkspace from '../components/LocalSimulatorWorkspace.astro';
 import '../styles/custom.css';
 import LbrLayout from '../layouts/LbrLayout.astro';
 
@@ -39,8 +40,8 @@ import LbrLayout from '../layouts/LbrLayout.astro';
     </section>
 
     <section class="lbr-stats" aria-label="LBR at a glance">
-      <div><strong>03</strong><span>hands-on spaces</span></div>
-      <div><strong>15+</strong><span>starter components</span></div>
+      <div><strong>04</strong><span>canvas robot labs</span></div>
+      <div><strong>23</strong><span>clickable components</span></div>
       <div><strong>01</strong><span>clear next step</span></div>
       <p><span class="lbr-status-dot"></span> Learning lab online</p>
     </section>
@@ -50,8 +51,14 @@ import LbrLayout from '../layouts/LbrLayout.astro';
       <div class="lbr-path-grid">
         <a class="lbr-path-card lbr-path-orange" href="/robots/"><div class="lbr-path-top"><span class="lbr-card-number">01</span><span class="lbr-path-icon">↗</span></div><h3>Try Live Robots</h3><p>See a small robot respond, then learn the idea behind its movement.</p><span class="lbr-path-link">Explore robots <b>→</b></span></a>
         <a class="lbr-path-card lbr-path-cyan" href="/forge/"><div class="lbr-path-top"><span class="lbr-card-number">02</span><span class="lbr-path-icon">⌘</span></div><h3>Use The Forge</h3><p>Check power, pins, and shopping totals before you connect a single wire.</p><span class="lbr-path-link">Plan a build <b>→</b></span></a>
-        <a class="lbr-path-card lbr-path-slate" href="/playground/"><div class="lbr-path-top"><span class="lbr-card-number">03</span><span class="lbr-path-icon">⌁</span></div><h3>Pose a Leg</h3><p>Move a three-joint model and see how a robot turns angles into steps.</p><span class="lbr-path-link">Open playground <b>→</b></span></a>
+         <a class="lbr-path-card lbr-path-slate" href="/playground/"><div class="lbr-path-top"><span class="lbr-card-number">03</span><span class="lbr-path-icon">⌁</span></div><h3>Pose a Leg</h3><p>Move a three-joint model and see how a robot turns angles into steps.</p><span class="lbr-path-link">Open playground <b>→</b></span></a>
+         <a class="lbr-path-card lbr-path-orange" href="/tools/"><div class="lbr-path-top"><span class="lbr-card-number">04</span><span class="lbr-path-icon">⚡</span></div><h3>Calculate first</h3><p>Check battery runtime, servo torque, voltage dividers, I²C collisions, and wheel speed.</p><span class="lbr-path-link">Open six calculators <b>→</b></span></a>
       </div>
+    </section>
+
+    <section class="lbr-section lbr-home-lab" aria-labelledby="home-lab-title">
+      <div class="lbr-section-heading"><div><p class="lbr-kicker">Start here</p><h2 id="home-lab-title">Run a robot experiment now.</h2></div><span class="lbr-section-note">No account, download, or hardware required. Press Play and watch the control loop change.</span></div>
+      <LocalSimulatorWorkspace />
     </section>
 
     <section class="lbr-lower-grid">

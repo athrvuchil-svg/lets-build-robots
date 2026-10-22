@@ -1,0 +1,14 @@
+---
+title: Robotics Calculators
+description: Six client-side robotics calculators for battery, torque, voltage, stepper, I2C, and wheel planning.
+---
+
+import TopUtilityBar from '../../components/TopUtilityBar.astro';
+import RobotTools from '../../components/RobotTools.astro';
+import VideoLibrary from '../../components/VideoLibrary.astro';
+import '../../styles/custom.css';
+import LbrLayout from '../../layouts/LbrLayout.astro';
+
+<LbrLayout title="Robotics Calculators" description="Six client-side robotics calculators for battery, torque, voltage, stepper, I2C, and wheel planning." path="/tools/">
+<div class="lbr-page not-content"><TopUtilityBar activeView="tools" /><header class="lbr-page-hero"><div><p class="lbr-eyebrow"><span class="lbr-pulse"></span> No signup · instant math</p><h1>Calculate before you <span>build.</span></h1><p class="lbr-page-lede">Use small engineering calculators to make the next wiring decision explicit. Change an input and the output updates immediately.</p></div><div class="lbr-page-hero-note"><strong>06</strong><span>client-side calculators</span><small>no remote data required</small></div></header><RobotTools /><VideoLibrary /></div>
+</LbrLayout>

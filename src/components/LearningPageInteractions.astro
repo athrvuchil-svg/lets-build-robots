@@ -26,9 +26,7 @@
     });
     let visible = 0;
     pinCards.forEach((card) => {
-      const text = card.textContent?.toLowerCase() ?? '';
-      const status = text.includes('wifi') || text.includes('analog') ? 'adc1' : text.includes('boot') || text.includes('startup') ? 'trap' : text.includes('5v') || text.includes('voltage') ? 'forbidden' : 'safe';
-      const show = selected === 'all' || card.dataset.pinBoard === selected || card.dataset.pinBoard === 'all' || card.dataset.pinStatus === selected || status === selected;
+       const show = selected === 'all' || card.dataset.pinBoard === selected || card.dataset.pinBoard === 'all' || card.dataset.pinStatus === selected;
       card.hidden = !show;
       if (show) visible += 1;
     });

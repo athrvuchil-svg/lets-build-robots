@@ -5,12 +5,13 @@ interface Props {
 
 const { activeView = '' } = Astro.props;
 const tabs = [
-  { id: 'robots', label: 'Robots', href: '/robots/' },
-  { id: 'forge', label: 'Forge', href: '/forge/' },
-  { id: 'playground', label: 'Playground', href: '/playground/' },
-  { id: 'traps', label: 'Traps', href: '/traps/' },
-  { id: 'challenges', label: 'Challenges', href: '/challenges/' },
-  { id: 'roadmap', label: 'Roadmap', href: '/roadmap/' },
+  { id: 'robots', label: '🚀 1. Try Live Robots', href: '/robots/' },
+  { id: 'forge', label: '🛒 2. Part Picker', href: '/forge/' },
+  { id: 'playground', label: '🦾 3. 3D Leg & Arm Lab', href: '/playground/' },
+  { id: 'tools', label: '⚡ 4. Calculators (6)', href: '/tools/' },
+  { id: 'components', label: '📦 5. Hardware Catalog (23)', href: '/components/' },
+  { id: 'traps', label: '💡 6. Mistake Saver Wiki', href: '/traps/' },
+  { id: 'roadmap', label: '🗺️ 7. Roadmap & Challenges', href: '/roadmap/' },
 ];
 ---
 
@@ -20,5 +21,4 @@ const tabs = [
       {tab.label}
     </a>
   ))}
-  <a class:list={{ 'is-active': activeView === 'components' }} href="/components/" aria-current={activeView === 'components' ? 'page' : undefined}>Components</a>
 </nav>

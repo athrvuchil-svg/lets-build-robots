@@ -6,6 +6,8 @@ import TopUtilityBar from '../../components/TopUtilityBar.astro';
 import SponsorSlot from '../../components/SponsorSlot.astro';
 import LocalSimulatorWorkspace from '../../components/LocalSimulatorWorkspace.astro';
 import GitHubRobotPull from '../../components/GitHubRobotPull.astro';
+import VideoLibrary from '../../components/VideoLibrary.astro';
+import LocalQuestionBox from '../../components/LocalQuestionBox.astro';
 import '../../styles/custom.css';
 import LbrLayout from '../../layouts/LbrLayout.astro';
 
@@ -20,15 +22,17 @@ import LbrLayout from '../../layouts/LbrLayout.astro';
       <h1 id="robots-title">Try a robot idea<br /><span>before you wire it.</span></h1>
       <p class="lbr-hero-lede">Run a real browser simulation, then pull current open-source robot code from GitHub. The distinction is visible: local physics stays local, repository data comes from the live public API.</p>
     </div>
-    <div class="lbr-page-hero-note"><strong>03</strong><span>honest local profiles</span><small>SVG and DOM only · no iframe</small></div>
+    <div class="lbr-page-hero-note"><strong>04</strong><span>canvas profiles</span><small>60FPS local animation · no hardware control</small></div>
   </section>
 
   <LocalSimulatorWorkspace />
   <GitHubRobotPull />
+  <VideoLibrary />
 
   <section class="lbr-community-card lbr-robots-community" aria-labelledby="robots-community-title">
     <div class="lbr-community-heading"><div><p class="lbr-kicker">Starter Q&amp;A</p><h2 id="robots-community-title">What should I try first?</h2></div><span class="lbr-local-badge">SAFETY FIRST</span></div>
-    <div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>Does this simulator replace testing a real robot?</strong><p>No. It is a deterministic browser model for timing and signals. Use datasheets, current limits, and supervised bench testing for real hardware.</p><span>Start with Servo gait, then open the Forge report before wiring.</span></div></div>
+    <div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>Does this simulator replace testing a real robot?</strong><p>No. It is a deterministic browser model for timing and signals. Use datasheets, current limits, and supervised bench testing for real hardware.</p><span>🧑‍🎓 Aarav_Mechatronics (1st Year): “The separate 5V 8A buck + PCA9685 stopped my servo shaking because the ESP32 no longer fed the whole servo rail.”</span></div></div>
+    <LocalQuestionBox /><p class="lbr-muted-copy">Questions are saved in this browser for now. A public Giscus discussion will be connected when repository discussion identifiers are configured.</p>
   </section>
 </div>
 </LbrLayout>
