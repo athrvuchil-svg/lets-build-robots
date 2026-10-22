@@ -54,8 +54,9 @@ const profiles = [
 
     <div class="lbr-sim-console">
       <div class="lbr-console-top"><span data-sim-status>Ready</span><span class="font-mono" data-sim-tick>tick 000</span></div>
-      <p data-sim-description>{profiles[0].plain}</p>
-      <div class="lbr-sim-actions"><button class="lbr-button lbr-button-primary" type="button" data-sim-play>Play</button><button class="lbr-button lbr-button-quiet" type="button" data-sim-stop>Stop and release</button></div>
+       <p data-sim-description>{profiles[0].plain}</p>
+       <label class="lbr-sim-control"><span data-control-label>Gait speed <b data-control-value>50%</b></span><input type="range" min="1" max="100" value="50" data-sim-control /></label>
+       <div class="lbr-sim-actions"><button class="lbr-button lbr-button-primary" type="button" data-sim-play>Play</button><button class="lbr-button lbr-button-quiet" type="button" data-sim-stop>Stop and release</button></div>
       <div class="lbr-log-wrap"><div class="lbr-log-heading"><strong>Run log</strong><span class="eng-only-inline">local event stream</span></div><ul class="lbr-run-log" data-run-log><li>Ready · nothing is running</li></ul></div>
       <p class="eng-only lbr-engineer-note">No iframe or remote runtime is created. The active island owns one timer and releases it on Stop, Close, or profile change.</p>
     </div>
@@ -63,7 +64,7 @@ const profiles = [
 </section>
 
 <script>
-  import { registerActiveIsland } from '../utils/islandRegistry';
+  import { registerActiveIsland, clearActiveIsland } from '../utils/islandRegistry';
 
   const root = document.querySelector<HTMLElement>('[data-local-simulator]');
   const profileButtons = [...(root?.querySelectorAll<HTMLButtonElement>('[data-profile]') ?? [])];
@@ -79,6 +80,9 @@ const profiles = [
   const log = root?.querySelector<HTMLUListElement>('[data-run-log]');
   const play = root?.querySelector<HTMLButtonElement>('[data-sim-play]');
   const stop = root?.querySelector<HTMLButtonElement>('[data-sim-stop]');
+  const control = root?.querySelector<HTMLInputElement>('[data-sim-control]');
+  const controlLabel = root?.querySelector<HTMLElement>('[data-control-label]');
+  const controlValue = root?.querySelector<HTMLElement>('[data-control-value]');
 
   const profileCopy: Record<string, { name: string; plain: string }> = {
     'servo-gait': { name: 'Servo gait', plain: 'A small four-leg rhythm preview. It demonstrates timing, not a physics engine.' },
@@ -92,6 +96,7 @@ const profiles = [
   let roverPosition = 50;
   let roverVelocity = 0;
   let motorOutput = 0;
+  function updateControl() { const value = Number(control?.value ?? 50); if (controlValue) controlValue.textContent = `${value}${selected === 'line-follow' ? '%' : selected === 'motor-ramp' ? '%' : '%'}`; if (controlLabel) controlLabel.firstChild!.textContent = selected === 'line-follow' ? 'Sensor contrast ' : selected === 'motor-ramp' ? 'Target PWM ' : 'Gait speed '; }
 
   function addLog(message: string) {
     if (!log) return;
@@ -107,7 +112,7 @@ const profiles = [
     if (motorFill) motorFill.style.width = '0%';
   }
 
-  function destroy() {
+  function destroy(release = false) {
     if (timer !== undefined) window.clearInterval(timer);
     timer = undefined;
     tick = 0;
@@ -119,13 +124,14 @@ const profiles = [
     if (status) status.textContent = 'Stopped · resources released';
     if (tickLabel) tickLabel.textContent = 'tick 000';
     if (stageLabel) stageLabel.textContent = `${profileCopy[selected].name} · stopped`;
+    if (release && window.__LBR_ACTIVE_TOOL_NAME__) clearActiveIsland();
   }
 
   function step() {
     tick += 1;
     if (tickLabel) tickLabel.textContent = `tick ${String(tick).padStart(3, '0')}`;
     if (selected === 'servo-gait') {
-      const phase = tick / 5;
+       const phase = tick / (Math.max(10, Number(control?.value ?? 50) / 5));
       stageRobot?.style.setProperty('transform', `translate(-50%, -50%) rotate(${Math.sin(phase) * 5}deg) translateY(${Math.cos(phase * 1.3) * 4}px)`);
     } else if (selected === 'line-follow') {
       linePosition = 50 + Math.sin(tick / 10) * 27;
@@ -136,10 +142,10 @@ const profiles = [
       roverVelocity = Math.max(-3, Math.min(3, roverVelocity + steering * 0.22));
       roverPosition = Math.max(5, Math.min(95, roverPosition + roverVelocity));
       lineMarker?.style.setProperty('left', `${roverPosition}%`);
-      lineTrack?.style.setProperty('--line-brightness', `${0.45 + Math.max(leftSensor, rightSensor) * 0.5}`);
+      lineTrack?.style.setProperty('--line-brightness', `${0.25 + Math.max(leftSensor, rightSensor) * (Number(control?.value ?? 50) / 100)}`);
       addLog(`Sensors L ${leftSensor.toFixed(2)} · R ${rightSensor.toFixed(2)} · steering ${steering.toFixed(2)}`);
     } else {
-      const target = tick < 12 ? tick * 8 : 100;
+      const target = Math.min(Number(control?.value ?? 50), tick * 8);
       motorOutput += (target - motorOutput) * 0.24;
       if (motorFill) motorFill.style.width = `${motorOutput.toFixed(1)}%`;
       addLog(`PWM target ${target}% · measured ${motorOutput.toFixed(1)}%`);
@@ -147,7 +153,7 @@ const profiles = [
   }
 
   function start() {
-    destroy();
+     destroy(true);
     registerActiveIsland(`local-${selected}`, destroy);
     if (status) status.textContent = 'Running · local loop active';
     if (stageLabel) stageLabel.textContent = `${profileCopy[selected].name} · running`;
@@ -156,14 +162,15 @@ const profiles = [
   }
 
   profileButtons.forEach((button) => button.addEventListener('click', () => {
-    destroy();
+     destroy(true);
     selected = button.dataset.profile ?? 'servo-gait';
     profileButtons.forEach((item) => {
       const isSelected = item === button;
       item.classList.toggle('is-selected', isSelected);
       item.setAttribute('aria-selected', String(isSelected));
     });
-    if (description) description.textContent = profileCopy[selected].plain;
+     if (description) description.textContent = profileCopy[selected].plain;
+     if (control) { control.value = selected === 'motor-ramp' ? '70' : '50'; updateControl(); }
     if (stageLabel) stageLabel.textContent = `${profileCopy[selected].name} · ready`;
     if (selected === 'line-follow') lineTrack?.classList.add('is-visible'); else lineTrack?.classList.remove('is-visible');
     if (selected === 'motor-ramp') motorGauge?.classList.add('is-visible'); else motorGauge?.classList.remove('is-visible');
@@ -171,6 +178,8 @@ const profiles = [
     addLog(`Selected ${profileCopy[selected].name}`);
   }));
 
-  play?.addEventListener('click', start);
-  stop?.addEventListener('click', () => { destroy(); addLog('Stopped · local resources released'); });
+   play?.addEventListener('click', start);
+   control?.addEventListener('input', updateControl);
+   updateControl();
+   stop?.addEventListener('click', () => { destroy(true); addLog('Stopped · local resources released'); });
 </script>

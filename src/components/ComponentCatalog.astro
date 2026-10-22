@@ -1,0 +1,23 @@
+---
+import components from '../data/components.json';
+const catalog = components.map((part) => ({ ...part, facts: (part as { facts?: { notes?: string; source?: string } }).facts ?? {} }));
+---
+
+<section class="lbr-catalog" data-component-catalog>
+  <div class="lbr-catalog-head"><div><p class="lbr-kicker">Component library</p><h2>Find the part you actually need</h2><p class="lbr-muted-copy">Search the baseline catalog by name, job, voltage, current, or address. Select a card to inspect its limits before adding it to a build.</p></div><div class="lbr-catalog-count"><strong>{catalog.length}</strong><span>verified baseline parts</span></div></div>
+  <label class="lbr-catalog-search"><span>Search parts</span><input type="search" placeholder="Try: 3.3V, servo, I2C, driver…" data-catalog-search /></label>
+  <div class="lbr-catalog-grid" data-catalog-grid>
+    {catalog.map((part) => <button class="lbr-catalog-card" type="button" data-catalog-card data-search={`${part.part} ${part.kind} ${part.logicV ?? ''} ${part.signalV ?? ''} ${part.i2c ?? ''} ${JSON.stringify(part.facts)}`} aria-expanded="false"><span class="lbr-chip">{part.kind}</span><strong>{part.part}</strong><small>{part.in.store} · ₹{part.in.price} · {part.us.store} · ${part.us.price.toFixed(2)}</small><span class="lbr-catalog-detail" hidden><b>Electrical / mechanical facts</b><br />{part.logicV ? `Logic: ${part.logicV}V · ` : ''}{part.signalV ? `Signal: ${part.signalV}V · ` : ''}{part.pwm ? `PWM: ${part.pwm} · ` : ''}{part.stallA ? `Stall/max current: ${part.stallA}A · ` : ''}{part.i2c ? `I²C: ${part.i2c} · ` : ''}{part.weightG}g{part.facts?.notes ? ` · ${part.facts.notes}` : ''}<br /><em>Source: {part.facts?.source ?? 'baseline catalog'} · prices are regional snapshots</em></span></button>)}
+  </div>
+  <p class="lbr-catalog-empty" data-catalog-empty hidden>No parts match that search. Try “servo”, “ESP32”, or “5V”.</p>
+</section>
+
+<script>
+  const catalogRoot = document.querySelector<HTMLElement>('[data-component-catalog]');
+  const catalogSearch = catalogRoot?.querySelector<HTMLInputElement>('[data-catalog-search]');
+  const catalogCards = [...(catalogRoot?.querySelectorAll<HTMLButtonElement>('[data-catalog-card]') ?? [])];
+  const empty = catalogRoot?.querySelector<HTMLElement>('[data-catalog-empty]');
+  function filterCatalog() { const term = catalogSearch?.value.trim().toLowerCase() ?? ''; let visible = 0; catalogCards.forEach((card) => { const show = !term || (card.dataset.search ?? '').toLowerCase().includes(term); card.hidden = !show; if (show) visible += 1; }); if (empty) empty.hidden = visible !== 0; }
+  catalogSearch?.addEventListener('input', filterCatalog);
+  catalogCards.forEach((card) => card.addEventListener('click', () => { const detail = card.querySelector<HTMLElement>('.lbr-catalog-detail'); const expanded = card.getAttribute('aria-expanded') === 'true'; card.setAttribute('aria-expanded', String(!expanded)); if (detail) detail.hidden = expanded; }));
+</script>

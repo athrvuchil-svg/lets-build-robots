@@ -33,3 +33,17 @@ test('beginner-first CSS is static and does not depend on JavaScript to hide spe
   assert.match(css, /\.eng-only,.eng-only-inline\s*\{\s*display:none/);
   assert.match(css, /body\.engineer-mode \.eng-only/);
 });
+
+test('catalog and Forge math protect the user-facing baseline', async () => {
+  const catalog = JSON.parse(await read('src/data/components.json'));
+  assert.ok(catalog.length >= 15);
+  for (const id of ['esp32-devkit-v1', 'mg90s-servo-x12', 'buck-5v-8a', 'mpu6050-imu', 'txs0108e-shifter']) assert.ok(catalog.some((part) => part.id === id));
+  const servos = catalog.find((part) => part.id === 'mg90s-servo-x12');
+  const lipo = catalog.find((part) => part.id === 'lipo-2s-2200');
+  assert.equal(servos.stallA, 9.6);
+  assert.equal(lipo.stallA, 45);
+  assert.match(await read('src/components/ComponentCatalog.astro'), /data-catalog-search/);
+  const forge = await read('src/components/ForgePicker.astro');
+  assert.match(forge, /actuatorStallA/);
+  assert.match(forge, /Quartz Components/);
+});

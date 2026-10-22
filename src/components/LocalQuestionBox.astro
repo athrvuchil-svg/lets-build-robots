@@ -1,0 +1,10 @@
+<form class="lbr-question-form" data-question-form><input required maxlength="180" placeholder="Ask about a part, pin, or simulation…" aria-label="Your question" /><button class="lbr-button lbr-button-quiet" type="submit">Post locally</button></form>
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-question-form]');
+  const list = document.querySelector<HTMLElement>('[data-question-list]');
+  const key = 'lbr-questions';
+  const getQuestions = () => { try { return JSON.parse(localStorage.getItem(key) || '[]') as string[]; } catch { return []; } };
+  const render = () => { const count = getQuestions().length; if (list) list.textContent = count ? `${count} question${count === 1 ? '' : 's'} saved on this device.` : 'Starter guidance is ready.'; };
+  render();
+  form?.addEventListener('submit', (event) => { event.preventDefault(); const input = form.querySelector<HTMLInputElement>('input'); const value = input?.value.trim(); if (!value) return; const questions = [...getQuestions(), value].slice(-20); localStorage.setItem(key, JSON.stringify(questions)); form.reset(); render(); });
+</script>

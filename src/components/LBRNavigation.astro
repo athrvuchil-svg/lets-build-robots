@@ -14,10 +14,11 @@ const tabs = [
 ];
 ---
 
-<nav class="lbr-nav" aria-label="Main navigation">
+<nav class="lbr-nav" aria-label="Main navigation"><a href="/" aria-label="Let's Build Robots home">LBR Home</a>
   {tabs.map((tab) => (
     <a class:list={{ 'is-active': activeView === tab.id }} href={tab.href} aria-current={activeView === tab.id ? 'page' : undefined}>
       {tab.label}
     </a>
   ))}
+  <a class:list={{ 'is-active': activeView === 'components' }} href="/components/" aria-current={activeView === 'components' ? 'page' : undefined}>Components</a>
 </nav>

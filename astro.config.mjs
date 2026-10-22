@@ -3,7 +3,7 @@ import starlight from '@astrojs/starlight';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://letsbuildrobots.tech',
+  site: 'https://lets-build-robots.pages.dev',
   integrations: [
     starlight({
       title: "Let's Build Robots",
@@ -14,6 +14,7 @@ export default defineConfig({
         { label: 'Try Live Robots', link: '/robots/' },
         { label: 'The Forge', link: '/forge/' },
         { label: 'Leg Playground', link: '/playground/' },
+        { label: 'Components Library', link: '/components/' },
       ],
     }),
   ],

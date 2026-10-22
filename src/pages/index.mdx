@@ -6,6 +6,7 @@ template: splash
 
 import TopUtilityBar from '../components/TopUtilityBar.astro';
 import SponsorSlot from '../components/SponsorSlot.astro';
+import LocalQuestionBox from '../components/LocalQuestionBox.astro';
 import '../styles/custom.css';
 
 <div class="lbr-home not-content">
@@ -53,7 +54,7 @@ import '../styles/custom.css';
 
     <section class="lbr-lower-grid">
       <div class="lbr-panel lbr-roadmap" aria-labelledby="roadmap-title"><div class="lbr-panel-head"><div><p class="lbr-kicker">Your first build</p><h2 id="roadmap-title">A simple route to moving</h2></div><span class="lbr-step-count">1 / 4</span></div><ol class="lbr-roadmap-list"><li class="is-current"><span>01</span><div><strong>Meet the robot</strong><small>Understand what each part does.</small></div><b>Now</b></li><li><span>02</span><div><strong>Check the plan</strong><small>Catch common power and pin mistakes.</small></div></li><li><span>03</span><div><strong>Make it move</strong><small>Use a guided, low-pressure experiment.</small></div></li></ol><a class="lbr-text-link" href="/robots/">See the learning route <b>→</b></a></div>
-      <aside class="lbr-panel lbr-sponsor" aria-label="Sponsor placeholder"><span class="lbr-sponsor-mark">LBR<span>+</span></span><p class="lbr-kicker">Built in public</p><h2>Help the next robot move.</h2><p>LBR is an open learning project. This space is ready for a future education or hardware partner.</p><span class="lbr-placeholder">Sponsor slot · coming soon</span></aside>
+       <aside class="lbr-panel lbr-sponsor" aria-label="Partner information"><span class="lbr-sponsor-mark">LBR<span>+</span></span><p class="lbr-kicker">Open learning project</p><h2>Help the next robot move.</h2><p>Support the project by sharing a build, contributing a correction, or sponsoring a clearly-labelled placement.</p><a class="lbr-button lbr-button-primary" href="https://github.com/athrvuchil-svg/lets-build-robots" target="_blank" rel="noreferrer">View the source ↗</a></aside>
     </section>
 
     <section class="lbr-section lbr-home-extras" aria-labelledby="start-kit-title">
@@ -64,20 +65,20 @@ import '../styles/custom.css';
       </div>
 
       <div class="lbr-repo-grid" aria-label="Open source repository cards">
-        <article class="lbr-repo-card"><span class="lbr-repo-icon">⌘</span><p class="lbr-kicker">Repository 01</p><h3>LBR web</h3><p>The Astro learning shell, beginner copy, and local interactive demos.</p><span class="lbr-repo-status">Public MVP · source folder</span></article>
+         <a class="lbr-repo-card" href="https://github.com/athrvuchil-svg/lets-build-robots" target="_blank" rel="noreferrer"><span class="lbr-repo-icon">⌘</span><p class="lbr-kicker">Repository 01</p><h3>LBR web</h3><p>The Astro learning shell, beginner copy, and local interactive demos.</p><span class="lbr-repo-status">Open source · GitHub ↗</span></a>
         <article class="lbr-repo-card"><span class="lbr-repo-icon">▦</span><p class="lbr-kicker">Repository 02</p><h3>Forge checks</h3><p>Deterministic power, pin, PWM, address, and shipping calculations.</p><span class="lbr-repo-status">In this project · no AI guesses</span></article>
-        <article class="lbr-repo-card"><span class="lbr-repo-icon">↗</span><p class="lbr-kicker">Repository 03</p><h3>Robot notes</h3><p>Plain-English build notes that connect a part choice to what the robot can do.</p><span class="lbr-repo-status">Planned public notes</span></article>
+         <a class="lbr-repo-card" href="/traps/"><span class="lbr-repo-icon">↗</span><p class="lbr-kicker">Reference 03</p><h3>Robot notes</h3><p>Plain-English build notes that connect a part choice to what the robot can do.</p><span class="lbr-repo-status">Read the pin + power guide →</span></a>
       </div>
 
       <div class="lbr-readme-card">
         <div><p class="lbr-kicker">Copy for your README</p><h3>Show learners where this project starts.</h3><p>Use the badge copy below once your repository URL is ready.</p></div>
-        <code class="lbr-readme-code">[![Let's Build Robots](https://img.shields.io/badge/LBR-Let's%20Build%20Robots-f26732)](https://letsbuildrobots.tech)</code>
+         <code class="lbr-readme-code">[![Let's Build Robots](https://img.shields.io/badge/LBR-Let's%20Build%20Robots-f26732)](https://lets-build-robots.pages.dev)</code>
       </div>
 
       <div class="lbr-community-card" aria-labelledby="community-title">
-        <div class="lbr-community-heading"><div><p class="lbr-kicker">Community corner</p><h3 id="community-title">Ask a small question, share a small win.</h3></div><span class="lbr-planned-badge">PLANNED · GISCUS INTEGRATION</span></div>
-        <div class="lbr-question"><div class="lbr-avatar">AM</div><div><strong>How do I choose a power supply for four servos?</strong><p>Start with stall current, add headroom, and check the regulator before wiring. A maintainer answer will appear here when the planned discussion integration is connected.</p><span>Starter Q&amp;A mock · no comments are submitted</span></div></div>
-        <button class="lbr-button lbr-button-quiet" type="button" disabled>Community replies · planned</button>
+         <div class="lbr-community-heading"><div><p class="lbr-kicker">Community corner</p><h3 id="community-title">Ask a small question, share a small win.</h3></div><span class="lbr-local-badge">SAVED IN THIS BROWSER</span></div>
+         <div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>How do I choose a power supply for four servos?</strong><p>Start with stall current, add headroom, and check the regulator before wiring. Your questions are saved locally so you can keep a build journal without an account.</p><span data-question-list>Starter guidance is ready.</span></div></div>
+         <LocalQuestionBox />
       </div>
     </section>
   </div>
