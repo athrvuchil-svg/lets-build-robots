@@ -1,0 +1,22 @@
+---
+interface Props { title: string; description: string; path?: string; }
+const { title, description, path = '/' } = Astro.props;
+const canonical = new URL(path, Astro.site ?? 'https://lets-build-robots.pages.dev').toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#101820" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" /><meta property="og:title" content={title} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" /><meta name="twitter:title" content={title} /><meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'EducationalWebSite', name: "Let's Build Robots", url: 'https://lets-build-robots.pages.dev', description })} />
+    <title>{title} · Let's Build Robots</title>
+    <script is:inline>try{const t=localStorage.getItem('lbr-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch{}</script>
+  </head>
+  <body><slot /></body>
+</html>

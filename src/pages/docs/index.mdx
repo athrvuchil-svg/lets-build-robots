@@ -5,5 +5,8 @@ description: Beginner-first robotics learning notes and safety guides.
 
 import TopUtilityBar from '../../components/TopUtilityBar.astro';
 import '../../styles/custom.css';
+import LbrLayout from '../../layouts/LbrLayout.astro';
 
+<LbrLayout title="Robotics Documentation" description="Plain-English robotics lessons, safety notes, component facts, and build workflows." path="/docs/">
 <div class="lbr-page-shell not-content"><TopUtilityBar activeView="docs" /><section class="lbr-page-hero"><div><p class="lbr-eyebrow"><span class="lbr-pulse"></span> Learn by checking</p><h1>Robotics notes that <span>stay honest.</span></h1><p class="lbr-page-lede">Use the Forge for deterministic compatibility checks, the Components library for part facts, the Playground for kinematics, and the Mistake Saver for pin and power traps.</p></div></section><div class="lbr-catalog-grid"><a class="lbr-catalog-card" href="/components/"><strong>Components library</strong><small>Search voltage, current, PWM, I²C, and sources.</small></a><a class="lbr-catalog-card" href="/forge/"><strong>The Forge</strong><small>Build a region-aware bill of materials.</small></a><a class="lbr-catalog-card" href="/traps/"><strong>Mistake Saver</strong><small>Learn the pin and power traps before wiring.</small></a></div></div>
+</LbrLayout>

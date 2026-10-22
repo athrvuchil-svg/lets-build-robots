@@ -6,14 +6,14 @@ description: Small robotics challenges with clear constraints and copyable devel
 import TopUtilityBar from '../../components/TopUtilityBar.astro';
 import LearningPageInteractions from '../../components/LearningPageInteractions.astro';
 import '../../styles/custom.css';
+import LbrLayout from '../../layouts/LbrLayout.astro';
 
+<LbrLayout title="Robotics Challenges" description="Bounded robotics challenges with measurable outputs, code templates, and build constraints." path="/challenges/">
 <div class="lbr-page lbr-challenges-page">
   <TopUtilityBar activeView="challenges" />
 
   <header class="lbr-page-hero">
-    <p class="lbr-kicker">Practice by making</p>
-    <h1>Small challenges. Real understanding.</h1>
-    <p class="lbr-page-lede">Pick a bounded problem, make one observation, and leave a note for your future self. The goal is not a perfect robot on the first try; it is a clear next experiment.</p>
+    <div><p class="lbr-kicker">Practice by making</p><h1>Small challenges. Real understanding.</h1><p class="lbr-page-lede">Pick a bounded problem, make one observation, and leave a note for your future self. The goal is not a perfect robot on the first try; it is a clear next experiment.</p></div>
   </header>
 
   <section class="lbr-feature-challenge lbr-card" aria-labelledby="challenge-title">
@@ -33,5 +33,6 @@ import '../../styles/custom.css';
 
   <p class="lbr-page-footnote"><span class="lbr-status-dot"></span> A template is a starting point. Verify pins, voltage, and library support against your exact parts.</p>
 </div>
+</LbrLayout>
 
 <LearningPageInteractions />

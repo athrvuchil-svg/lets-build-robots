@@ -6,7 +6,9 @@ description: An eight-step beginner roadmap from web ideas to a small moving rob
 import TopUtilityBar from '../../components/TopUtilityBar.astro';
 import LearningPageInteractions from '../../components/LearningPageInteractions.astro';
 import '../../styles/custom.css';
+import LbrLayout from '../../layouts/LbrLayout.astro';
 
+<LbrLayout title="Robotics Roadmap" description="An interactive eight-step roadmap from web development to a safe, moving robot." path="/roadmap/">
 <div class="lbr-page lbr-roadmap-page">
   <TopUtilityBar activeView="roadmap" />
 
@@ -37,5 +39,6 @@ import '../../styles/custom.css';
 
   <p class="lbr-page-footnote"><span class="lbr-status-dot"></span> Progress is saved only in this browser using localStorage. No account or sync is involved.</p>
 </div>
+</LbrLayout>
 
 <LearningPageInteractions />

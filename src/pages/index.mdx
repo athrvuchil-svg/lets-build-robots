@@ -8,7 +8,9 @@ import TopUtilityBar from '../components/TopUtilityBar.astro';
 import SponsorSlot from '../components/SponsorSlot.astro';
 import LocalQuestionBox from '../components/LocalQuestionBox.astro';
 import '../styles/custom.css';
+import LbrLayout from '../layouts/LbrLayout.astro';
 
+<LbrLayout title="Let's Build Robots" description="Beginner-first robotics simulations, deterministic part checks, component reference, and practical build guides." path="/">
 <div class="lbr-home not-content">
   <TopUtilityBar />
   <SponsorSlot />
@@ -85,3 +87,4 @@ import '../styles/custom.css';
 
   <footer class="lbr-footer"><span><b>LBR</b> · Let's Build Robots</span><span>Learn patiently. Build boldly.</span></footer>
 </div>
+</LbrLayout>

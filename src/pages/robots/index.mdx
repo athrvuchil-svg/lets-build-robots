@@ -7,7 +7,9 @@ import SponsorSlot from '../../components/SponsorSlot.astro';
 import LocalSimulatorWorkspace from '../../components/LocalSimulatorWorkspace.astro';
 import GitHubRobotPull from '../../components/GitHubRobotPull.astro';
 import '../../styles/custom.css';
+import LbrLayout from '../../layouts/LbrLayout.astro';
 
+<LbrLayout title="Try Live Robots" description="Run deterministic browser robotics simulations and pull current open-source robot repositories from GitHub." path="/robots/">
 <div class="lbr-page-shell not-content">
   <TopUtilityBar activeView="robots" />
   <SponsorSlot />
@@ -29,3 +31,4 @@ import '../../styles/custom.css';
     <div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>Does this simulator replace testing a real robot?</strong><p>No. It is a deterministic browser model for timing and signals. Use datasheets, current limits, and supervised bench testing for real hardware.</p><span>Start with Servo gait, then open the Forge report before wiring.</span></div></div>
   </section>
 </div>
+</LbrLayout>

@@ -5,5 +5,8 @@ title: 3D Leg Playground
 import TopUtilityBar from '../../components/TopUtilityBar.astro';
 import LegPlayground from '../../components/LegPlayground.astro';
 import '../../styles/custom.css';
+import LbrLayout from '../../layouts/LbrLayout.astro';
 
+<LbrLayout title="3D Robot Leg Playground" description="Move a three-joint robot leg, calculate forward kinematics, save keyframes, and export Arduino, ESP32, or ROS 2 code." path="/playground/">
 <div class="lbr-page-shell not-content"><TopUtilityBar activeView="playground" /><section class="lbr-page-hero"><div><p class="lbr-eyebrow"><span class="lbr-pulse"></span> Kinematics lab</p><h1>Make a leg <span>move.</span></h1><p class="lbr-page-lede">Move three joints and see how angles become a foot position. Save poses, load a walking sequence, and export code for Arduino, ESP32, or ROS 2.</p></div><div class="lbr-page-hero-note"><strong>3D</strong><span>live forward kinematics</span><small>canvas + code export</small></div></section><LegPlayground /></div>
+</LbrLayout>

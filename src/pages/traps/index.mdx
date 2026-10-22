@@ -6,14 +6,14 @@ description: Catch the small wiring and pin mistakes that make first robot build
 import TopUtilityBar from '../../components/TopUtilityBar.astro';
 import LearningPageInteractions from '../../components/LearningPageInteractions.astro';
 import '../../styles/custom.css';
+import LbrLayout from '../../layouts/LbrLayout.astro';
 
+<LbrLayout title="Mistake Saver Wiki" description="Plain-English ESP32 pin, servo power, motor driver, and I²C wiring guidance." path="/traps/">
 <div class="lbr-page lbr-traps-page">
   <TopUtilityBar activeView="traps" />
 
   <header class="lbr-page-hero">
-    <p class="lbr-kicker">The friendly warning shelf</p>
-    <h1>Mistake Saver Wiki: catch traps early.</h1>
-    <p class="lbr-page-lede">Most first-build surprises are small mismatches: a supply that is asked to do too much, a pin with a special job, or two sensors speaking at the same address. Start with the plain-English explanation, then switch to Engineer View when you want the pin numbers.</p>
+    <div><p class="lbr-kicker">The friendly warning shelf</p><h1>Mistake Saver Wiki: catch traps early.</h1><p class="lbr-page-lede">Most first-build surprises are small mismatches: a supply that is asked to do too much, a pin with a special job, or two sensors speaking at the same address. Start with the plain-English explanation, then switch to Engineer View when you want the pin numbers.</p></div>
   </header>
 
   <section class="lbr-trap-shell lbr-card" aria-labelledby="trap-guide-title">
@@ -71,5 +71,6 @@ import '../../styles/custom.css';
 
   <p class="lbr-page-footnote"><span class="lbr-status-dot"></span> These are learning guardrails, not manufacturer certification. Check the datasheet for your exact board and part.</p>
 </div>
+</LbrLayout>
 
 <LearningPageInteractions />
