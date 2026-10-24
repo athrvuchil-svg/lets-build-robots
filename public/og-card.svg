@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Let's Build Robots</title>
+  <desc id="desc">A browser-first robotics learning lab for your first real robot.</desc>
+  <rect width="1200" height="630" fill="#FAF8F5"/>
+  <rect x="40" y="40" width="1120" height="550" rx="28" fill="#121922"/>
+  <path d="M40 480H1160" stroke="#32404B" stroke-width="2"/>
+  <path d="M120 130H1080M120 200H1080M120 270H1080M120 340H1080M120 410H1080" stroke="#24313B" stroke-width="1"/>
+  <path d="M180 100V520M280 100V520M380 100V520M480 100V520M580 100V520M680 100V520M780 100V520M880 100V520M980 100V520" stroke="#24313B" stroke-width="1"/>
+  <text x="90" y="112" fill="#FB923C" font-family="monospace" font-size="20" font-weight="700" letter-spacing="4">LBR / STUDENT BUILD LAB</text>
+  <text x="90" y="245" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="68" font-weight="800">Build robots.</text>
+  <text x="90" y="318" fill="#FB923C" font-family="Arial, sans-serif" font-size="68" font-weight="800">Understand why.</text>
+  <text x="92" y="382" fill="#B9C7CC" font-family="Arial, sans-serif" font-size="24">Interactive labs · power checks · component context</text>
+  <g transform="translate(850 320)" fill="none" stroke="#6EE7D1" stroke-width="8">
+    <ellipse cx="0" cy="0" rx="120" ry="66"/>
+    <path d="M-90 -22L-180 -78L-210 -35M90 -22L180 -78L210 -35M-90 22L-180 78L-210 35M90 22L180 78L210 35" stroke="#FB923C" stroke-linecap="round"/>
+    <circle cx="-42" cy="-8" r="12" fill="#FAF8F5" stroke="#FAF8F5"/><circle cx="42" cy="-8" r="12" fill="#FAF8F5" stroke="#FAF8F5"/>
+  </g>
+</svg>

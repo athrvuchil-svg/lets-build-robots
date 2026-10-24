@@ -12,8 +12,12 @@ const canonical = new URL(path, Astro.site ?? 'https://lets-build-robots.pages.d
     <meta name="theme-color" content="#101820" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="application-name" content="Let's Build Robots" />
+    <meta name="apple-mobile-web-app-title" content="Let's Build Robots" />
     <meta property="og:type" content="website" /><meta property="og:title" content={title} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" /><meta name="twitter:title" content={title} /><meta name="twitter:description" content={description} />
+    <meta property="og:image" content="https://lets-build-robots.pages.dev/og-card.svg" /><meta property="og:image:alt" content="Let's Build Robots — a browser-first robotics learning lab" />
+    <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content={title} /><meta name="twitter:description" content={description} /><meta name="twitter:image" content="https://lets-build-robots.pages.dev/og-card.svg" />
     <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'EducationalWebSite', name: "Let's Build Robots", url: 'https://lets-build-robots.pages.dev', description })} />
     <title>{title} · Let's Build Robots</title>
     <script is:inline>try{if(localStorage.getItem('lbr-theme')==='dark')document.documentElement.classList.add('dark')}catch{}</script>

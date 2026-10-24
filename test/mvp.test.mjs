@@ -7,7 +7,7 @@ const read = (path) => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 
 test('all six LBR views exist and expose their primary route content', async () => {
   const routes = [
-    ['src/pages/index.mdx', 'Try Live Robots'],
+    ['src/pages/index.mdx', 'Open the robot lab'],
     ['src/pages/forge/index.mdx', 'The Forge'],
     ['src/pages/playground/index.mdx', '3D Leg Playground'],
     ['src/pages/traps/index.mdx', 'Common Traps'],

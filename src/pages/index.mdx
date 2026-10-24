@@ -1,97 +1,51 @@
 ---
 title: Let's Build Robots
-description: Beginner-first tools for learning robotics safely.
+description: A browser-first robotics learning lab for people building their first real robot.
 template: splash
 ---
 
 import TopUtilityBar from '../components/TopUtilityBar.astro';
-import SponsorSlot from '../components/SponsorSlot.astro';
 import LocalQuestionBox from '../components/LocalQuestionBox.astro';
 import LocalSimulatorWorkspace from '../components/LocalSimulatorWorkspace.astro';
 import '../styles/custom.css';
 import LbrLayout from '../layouts/LbrLayout.astro';
 
-<LbrLayout title="Let's Build Robots" description="Beginner-first robotics simulations, deterministic part checks, component reference, and practical build guides." path="/">
-<div class="lbr-home not-content">
+<LbrLayout title="Let's Build Robots" description="A browser-first robotics learning lab for people building their first real robot." path="/">
+<div class="lbr-home lbr-marketing-home not-content">
   <TopUtilityBar />
-  <SponsorSlot />
 
-  <div class="lbr-dashboard-content">
-    <section class="lbr-hero" aria-labelledby="hero-title">
-      <div class="lbr-hero-copy">
-        <div class="lbr-eyebrow"><span class="lbr-pulse" aria-hidden="true"></span> A friendly lab for first builds</div>
-        <h1 id="hero-title">Build robots.<br /><span>Understand why.</span></h1>
-        <p class="lbr-hero-lede">A calm, practical starting point for turning curiosity into your first moving machine. Learn one idea, try one tool, and keep your parts safe.</p>
-        <div class="lbr-hero-actions">
-          <a class="lbr-button lbr-button-primary" href="/robots/">Start exploring <span aria-hidden="true">↗</span></a>
-          <a class="lbr-button lbr-button-quiet" href="/forge/">Check a parts list <span aria-hidden="true">→</span></a>
-        </div>
-        <p class="lbr-microcopy"><span aria-hidden="true">●</span> No account needed <span aria-hidden="true">·</span> Built for curious beginners</p>
+  <main>
+    <section class="lbr-marketing-hero" aria-labelledby="hero-title">
+      <div class="lbr-marketing-hero-copy">
+        <p class="lbr-eyebrow"><span class="lbr-pulse" aria-hidden="true"></span> A practical robotics lab for your first build</p>
+        <h1 id="hero-title">Your first robot should <em>teach</em> you something.</h1>
+        <p class="lbr-marketing-lede">Let's Build Robots turns the confusing first hour into a clear sequence: see the behavior, check the power, understand the part, then build with fewer surprises.</p>
+        <div class="lbr-hero-actions"><a class="lbr-button lbr-button-primary" href="/robots/">Open the robot lab <span aria-hidden="true">↗</span></a><a class="lbr-button lbr-button-quiet" href="/forge/?preset=spiderbot-good">Start with a safe parts list <span aria-hidden="true">→</span></a></div>
+        <div class="lbr-hero-proof"><span><b>4</b> visual labs</span><span><b>23</b> mapped parts</span><span><b>0</b> signup walls</span></div>
       </div>
-
-      <div class="lbr-hero-visual" aria-label="A sample robot build dashboard">
-        <div class="lbr-orbit lbr-orbit-one"></div>
-        <div class="lbr-orbit lbr-orbit-two"></div>
-        <div class="lbr-robot-glyph" aria-hidden="true"><span class="lbr-robot-eye"></span><span class="lbr-robot-eye"></span><i></i></div>
-        <div class="lbr-float-card lbr-float-top"><span class="lbr-float-icon">✦</span><span><strong>Build confidence</strong><small>one small win at a time</small></span></div>
-        <div class="lbr-float-card lbr-float-bottom"><span class="lbr-float-icon lbr-cyan">⌁</span><span><strong>Signal check</strong><small>Beginner-friendly guidance</small></span></div>
-        <div class="lbr-grid-lines" aria-hidden="true"></div>
+      <div class="lbr-marketing-hero-art" aria-label="A robotics control desk preview">
+        <div class="lbr-art-topline"><span>LAB / 01</span><span>LOCAL CONTROL DESK</span></div>
+        <div class="lbr-art-grid"></div>
+        <div class="lbr-art-robot"><span class="lbr-art-joint lbr-art-joint-a"></span><span class="lbr-art-joint lbr-art-joint-b"></span><span class="lbr-art-joint lbr-art-joint-c"></span><span class="lbr-art-foot lbr-art-foot-a"></span><span class="lbr-art-foot lbr-art-foot-b"></span><span class="lbr-art-foot lbr-art-foot-c"></span><span class="lbr-art-foot lbr-art-foot-d"></span></div>
+        <div class="lbr-art-readout"><span>POWER RAIL</span><strong>5.00 V</strong><i></i><small>separate servo supply</small></div>
+        <div class="lbr-art-caption"><span>01</span><strong>SPIDERBOT / READY</strong><small>12 servo channels · PCA9685</small></div>
       </div>
     </section>
 
-    <section class="lbr-stats" aria-label="LBR at a glance">
-      <div><strong>04</strong><span>canvas robot labs</span></div>
-      <div><strong>23</strong><span>clickable components</span></div>
-      <div><strong>01</strong><span>clear next step</span></div>
-      <p><span class="lbr-status-dot"></span> Learning lab online</p>
-    </section>
+    <section class="lbr-proof-band" aria-label="Why people use LBR"><span class="lbr-proof-label">BUILT FOR THE MOMENT BEFORE THE FIRST WIRE</span><span>See it move</span><span>Know the limit</span><span>Buy less blindly</span><span>Learn in public</span></section>
 
-    <section class="lbr-section" aria-labelledby="choose-title">
-      <div class="lbr-section-heading"><div><p class="lbr-kicker">Choose your path</p><h2 id="choose-title">Where do you want to begin?</h2></div><span class="lbr-section-note">Tools are labeled honestly, so you always know what to expect.</span></div>
-      <div class="lbr-path-grid">
-        <a class="lbr-path-card lbr-path-orange" href="/robots/"><div class="lbr-path-top"><span class="lbr-card-number">01</span><span class="lbr-path-icon">↗</span></div><h3>Try Live Robots</h3><p>See a small robot respond, then learn the idea behind its movement.</p><span class="lbr-path-link">Explore robots <b>→</b></span></a>
-        <a class="lbr-path-card lbr-path-cyan" href="/forge/"><div class="lbr-path-top"><span class="lbr-card-number">02</span><span class="lbr-path-icon">⌘</span></div><h3>Use The Forge</h3><p>Check power, pins, and shopping totals before you connect a single wire.</p><span class="lbr-path-link">Plan a build <b>→</b></span></a>
-         <a class="lbr-path-card lbr-path-slate" href="/playground/"><div class="lbr-path-top"><span class="lbr-card-number">03</span><span class="lbr-path-icon">⌁</span></div><h3>Pose a Leg</h3><p>Move a three-joint model and see how a robot turns angles into steps.</p><span class="lbr-path-link">Open playground <b>→</b></span></a>
-         <a class="lbr-path-card lbr-path-orange" href="/tools/"><div class="lbr-path-top"><span class="lbr-card-number">04</span><span class="lbr-path-icon">⚡</span></div><h3>Calculate first</h3><p>Check battery runtime, servo torque, voltage dividers, I²C collisions, and wheel speed.</p><span class="lbr-path-link">Open six calculators <b>→</b></span></a>
-      </div>
-    </section>
+    <section class="lbr-marketing-section" aria-labelledby="how-title"><div class="lbr-marketing-section-head"><div><p class="lbr-kicker">The LBR loop</p><h2 id="how-title">A better first 30 minutes.</h2></div><p>Not a course dashboard. Not a parts marketplace. A focused workbench for making the next decision with evidence.</p></div><div class="lbr-loop-grid"><article><span>01</span><h3>Watch the behavior</h3><p>Run a local robot model and see how speed, steering, torque, or power changes the result.</p><a href="/robots/">Try a lab →</a></article><article><span>02</span><h3>Check the system</h3><p>Use the Forge and calculators to catch current, voltage, PWM, address, and shipping problems early.</p><a href="/forge/">Open The Forge →</a></article><article><span>03</span><h3>Build with context</h3><p>Open the part, the pin guide, and the source repository so the physical build has a reason behind it.</p><a href="/components/">Browse the catalog →</a></article></div></section>
 
-    <section class="lbr-section lbr-home-lab" aria-labelledby="home-lab-title">
-      <div class="lbr-section-heading"><div><p class="lbr-kicker">Start here</p><h2 id="home-lab-title">Run a robot experiment now.</h2></div><span class="lbr-section-note">No account, download, or hardware required. Press Play and watch the control loop change.</span></div>
-      <LocalSimulatorWorkspace />
-    </section>
+    <section class="lbr-marketing-section lbr-featured-section" aria-labelledby="featured-title"><div class="lbr-marketing-section-head"><div><p class="lbr-kicker">Start with a real project</p><h2 id="featured-title">Pick the kind of robot you want to understand.</h2></div><a class="lbr-text-link" href="/robots/">See all four labs <b>→</b></a></div><div class="lbr-featured-grid"><a href="/robots/" class="lbr-featured-card lbr-featured-dark"><span class="lbr-featured-number">01 / WALK</span><div><h3>Spiderbot</h3><p>Twelve servos, a separate power rail, and a visible brownout test.</p></div><strong>Open lab ↗</strong></a><a href="/robots/" class="lbr-featured-card lbr-featured-paper"><span class="lbr-featured-number">02 / REACH</span><div><h3>Desktop arm</h3><p>Click a target, solve the pose, and see when the servo runs out of torque.</p></div><strong>Open lab ↗</strong></a><a href="/robots/" class="lbr-featured-card lbr-featured-orange"><span class="lbr-featured-number">03 / TRACK</span><div><h3>PID rover</h3><p>Tune the loop and learn why a fast line follower can lose the line.</p></div><strong>Open lab ↗</strong></a></div></section>
 
-    <section class="lbr-lower-grid">
-      <div class="lbr-panel lbr-roadmap" aria-labelledby="roadmap-title"><div class="lbr-panel-head"><div><p class="lbr-kicker">Your first build</p><h2 id="roadmap-title">A simple route to moving</h2></div><span class="lbr-step-count">1 / 4</span></div><ol class="lbr-roadmap-list"><li class="is-current"><span>01</span><div><strong>Meet the robot</strong><small>Understand what each part does.</small></div><b>Now</b></li><li><span>02</span><div><strong>Check the plan</strong><small>Catch common power and pin mistakes.</small></div></li><li><span>03</span><div><strong>Make it move</strong><small>Use a guided, low-pressure experiment.</small></div></li></ol><a class="lbr-text-link" href="/robots/">See the learning route <b>→</b></a></div>
-       <aside class="lbr-panel lbr-sponsor" aria-label="Partner information"><span class="lbr-sponsor-mark">LBR<span>+</span></span><p class="lbr-kicker">Open learning project</p><h2>Help the next robot move.</h2><p>Support the project by sharing a build, contributing a correction, or sponsoring a clearly-labelled placement.</p><a class="lbr-button lbr-button-primary" href="https://github.com/athrvuchil-svg/lets-build-robots" target="_blank" rel="noreferrer">View the source ↗</a></aside>
-    </section>
+    <section class="lbr-marketing-section lbr-lab-section" aria-labelledby="lab-title"><div class="lbr-marketing-section-head"><div><p class="lbr-kicker">The workbench</p><h2 id="lab-title">Try it before you buy it.</h2></div><p>Load the local lab when you are ready. Nothing is pretending to be a physical robot, and nothing runs until you ask it to.</p></div><LocalSimulatorWorkspace /></section>
 
-    <section class="lbr-section lbr-home-extras" aria-labelledby="start-kit-title">
-      <div class="lbr-section-heading"><div><p class="lbr-kicker">Start small</p><h2 id="start-kit-title">Useful context before you build</h2></div><span class="lbr-section-note">Links and labels are intentionally honest while LBR is still a small public MVP.</span></div>
-      <div class="lbr-affiliate-card">
-        <div><span class="lbr-card-label">Shopping note</span><h3>Parts links are suggestions, not promises.</h3><p>When you use The Forge, prices and availability are snapshots. Any future retailer link will be marked as an affiliate link, and LBR will never treat a commission as proof that a part is safe.</p></div>
-        <div class="lbr-affiliate-meta"><span class="lbr-local-badge">DISCLOSURE FIRST</span><strong>Compare the datasheet</strong><small>Check voltage, current, and fit yourself.</small></div>
-      </div>
+    <section class="lbr-marketing-section lbr-honesty-section" aria-labelledby="honesty-title"><div class="lbr-honesty-copy"><p class="lbr-kicker">The honest layer</p><h2 id="honesty-title">No fake “AI recommendations.” Just visible trade-offs.</h2><p>LBR tells you when a part list is safe, weak, incomplete, or over budget. Retail prices are regional snapshots. Simulations are browser models. Hardware still needs a datasheet and supervised testing.</p><a class="lbr-button lbr-button-primary" href="/traps/">Read the mistake saver guide →</a></div><div class="lbr-honesty-list"><div><span>POWER</span><strong>Separate the servo rail</strong><small>Keep a 12-servo build from browning out the controller.</small></div><div><span>PINS</span><strong>Respect the ESP32</strong><small>ADC2, boot straps, input-only pins, and 5V signals matter.</small></div><div><span>PARTS</span><strong>Buy with a reason</strong><small>Every catalog card connects the job, the limit, and the source.</small></div></div></section>
 
-      <div class="lbr-repo-grid" aria-label="Open source repository cards">
-         <a class="lbr-repo-card" href="https://github.com/athrvuchil-svg/lets-build-robots" target="_blank" rel="noreferrer"><span class="lbr-repo-icon">⌘</span><p class="lbr-kicker">Repository 01</p><h3>LBR web</h3><p>The Astro learning shell, beginner copy, and local interactive demos.</p><span class="lbr-repo-status">Open source · GitHub ↗</span></a>
-        <article class="lbr-repo-card"><span class="lbr-repo-icon">▦</span><p class="lbr-kicker">Repository 02</p><h3>Forge checks</h3><p>Deterministic power, pin, PWM, address, and shipping calculations.</p><span class="lbr-repo-status">In this project · no AI guesses</span></article>
-         <a class="lbr-repo-card" href="/traps/"><span class="lbr-repo-icon">↗</span><p class="lbr-kicker">Reference 03</p><h3>Robot notes</h3><p>Plain-English build notes that connect a part choice to what the robot can do.</p><span class="lbr-repo-status">Read the pin + power guide →</span></a>
-      </div>
+    <section class="lbr-marketing-section lbr-final-cta" aria-labelledby="final-title"><div><p class="lbr-kicker">Ready when you are</p><h2 id="final-title">Make your next robot decision a better one.</h2><p>Start in the browser. Leave with a clearer build plan.</p></div><div class="lbr-final-actions"><a class="lbr-button lbr-button-primary" href="/robots/">Open the lab ↗</a><a class="lbr-button lbr-button-quiet" href="/roadmap/">See the roadmap</a></div></section>
 
-      <div class="lbr-readme-card">
-        <div><p class="lbr-kicker">Copy for your README</p><h3>Show learners where this project starts.</h3><p>Use the badge copy below once your repository URL is ready.</p></div>
-         <code class="lbr-readme-code">[![Let's Build Robots](https://img.shields.io/badge/LBR-Let's%20Build%20Robots-f26732)](https://lets-build-robots.pages.dev)</code>
-      </div>
-
-      <div class="lbr-community-card" aria-labelledby="community-title">
-         <div class="lbr-community-heading"><div><p class="lbr-kicker">Community corner</p><h3 id="community-title">Ask a small question, share a small win.</h3></div><span class="lbr-local-badge">SAVED IN THIS BROWSER</span></div>
-         <div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>How do I choose a power supply for four servos?</strong><p>Start with stall current, add headroom, and check the regulator before wiring. Your questions are saved locally so you can keep a build journal without an account.</p><span data-question-list>Starter guidance is ready.</span></div></div>
-         <LocalQuestionBox />
-      </div>
-    </section>
-  </div>
-
-  <footer class="lbr-footer"><span><b>LBR</b> · Let's Build Robots</span><span>Learn patiently. Build boldly.</span></footer>
+    <section class="lbr-community-card lbr-marketing-community" aria-labelledby="community-title"><div class="lbr-community-heading"><div><p class="lbr-kicker">Build in public, carefully</p><h3 id="community-title">Ask a small question. Keep the answer.</h3></div><span class="lbr-local-badge">SAVED IN THIS BROWSER</span></div><div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>What changed when your robot finally worked?</strong><p>Keep a short build note: the part, the measurement, and the next thing you would test.</p><span data-question-list>Starter guidance is ready.</span></div></div><LocalQuestionBox /></section>
+  </main>
+  <footer class="lbr-footer"><span><b>LBR</b> · Let's Build Robots</span><span>Open source · browser-first · built to be shared</span></footer>
 </div>
 </LbrLayout>
