@@ -59,6 +59,8 @@ test('all 23 catalog entries expose both real regional buy URLs', async () => {
   for (const id of ['spiderbot', 'arm', 'line', 'radar']) assert.match(sim, new RegExp(id));
   assert.match(sim, /requestAnimationFrame/);
   assert.match(sim, /youtube-nocookie\.com\/embed/);
+  assert.match(sim, /pointerdown/);
+  assert.match(sim, /radarDistance = Number\(el\.value\)/);
 });
 
 test('pure calculators and Forge presets produce observable engineering results', async () => {
