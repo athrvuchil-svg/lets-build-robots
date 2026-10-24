@@ -61,6 +61,8 @@ test('all 23 catalog entries expose both real regional buy URLs', async () => {
   assert.match(sim, /youtube-nocookie\.com\/embed/);
   assert.match(sim, /pointerdown/);
   assert.match(sim, /radarDistance = Number\(el\.value\)/);
+  assert.match(sim, /function drawCurrent/);
+  assert.match(sim, /renderControls\(\); renderDetail\(\); drawCurrent\(0\)/);
 });
 
 test('pure calculators and Forge presets produce observable engineering results', async () => {
