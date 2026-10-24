@@ -1,10 +1,11 @@
 ---
 import components from '../data/components.json';
 const groups: [string, string[]][] = [
-  ['1. Robot Brains', ['esp32-devkit-v1', 'arduino-uno-r3']],
-  ['2. Motors & Joints', ['mg90s-servo-x4', 'mg90s-servo-x12', 'dc-gearmotor-12v', 'nema17-stepper']],
-  ['3. Power & Drivers', ['pca9685-16ch', 'buck-5v-8a', 'l298n-driver', 'tb6600-driver', 'a4988-driver', 'lipo-2s-2200', 'bat-9v-alkaline']],
-  ['4. Sensors & Logic', ['mpu6050-imu', 'ds3231-rtc-0x68', 'hcsr04-5v', 'txs0108e-shifter', 'bme280-env', 'vl53l0x-tof', 'ssd1306-oled', 'ina219-power', 'ds18b20-temp', 'ec11-encoder']],
+  ['1. Robot Brains', ['esp32-devkit-v1', 'arduino-uno-r3', 'esp8266-nodemcu', 'arduino-nano', 'rp2040-pico-w']],
+  ['2. Motors & Joints', ['mg90s-servo-x4', 'mg90s-servo-x12', 'sg90-servo-x4', 'mg996r-servo-x4', 'dc-gearmotor-12v', 'tt-gearmotor-x2', 'n20-gearmotor', 'nema17-stepper', '28byj48-stepper']],
+  ['3. Power & Drivers', ['pca9685-16ch', 'buck-5v-8a', 'buck-5v-3a', 'l298n-driver', 'tb6600-driver', 'a4988-driver', 'drv8825-driver', 'bts7960-driver', 'tmc2209-driver', 'lipo-2s-2200', 'lipo-1s-1000', '18650-2s-pack', 'bat-9v-alkaline', 'usb-c-5v-3a', 'fuse-holder-5a']],
+  ['4. Sensors & Logic', ['mpu6050-imu', 'ds3231-rtc-0x68', 'hcsr04-5v', 'txs0108e-shifter', 'bme280-env', 'vl53l0x-tof', 'ssd1306-oled', 'ina219-power', 'ds18b20-temp', 'ec11-encoder', 'qtr-8a-line-array', 'ir-obstacle-pair', 'hc-sr501-pir', 'mpu9250-imu', 'apds9960-gesture', 'bh1750-light', 'hall-effect-a3144', 'analog-joystick']],
+  ['5. Chassis & Wiring', ['robot-wheel-65mm', '2wd-chassis', 'caster-wheel', 'breadboard-830', 'jumper-wire-kit']],
 ];
 const presets = {
   'spiderbot-good': ['esp32-devkit-v1', 'mg90s-servo-x12', 'pca9685-16ch', 'buck-5v-8a', 'lipo-2s-2200', 'mpu6050-imu'],

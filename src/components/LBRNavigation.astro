@@ -3,13 +3,14 @@ interface Props {
   activeView?: string;
 }
 
+import components from '../data/components.json';
 const { activeView = '' } = Astro.props;
 const tabs = [
   { id: 'robots', label: '🚀 1. Try Live Robots', href: '/robots/' },
   { id: 'forge', label: '🛒 2. Part Picker', href: '/forge/' },
   { id: 'playground', label: '🦾 3. 3D Leg & Arm Lab', href: '/playground/' },
   { id: 'tools', label: '⚡ 4. Calculators (6)', href: '/tools/' },
-  { id: 'components', label: '📦 5. Hardware Catalog (23)', href: '/components/' },
+  { id: 'components', label: `📦 5. Hardware Catalog (${components.length})`, href: '/components/' },
   { id: 'traps', label: '💡 6. Mistake Saver Wiki', href: '/traps/' },
   { id: 'roadmap', label: '🗺️ 7. Roadmap & Challenges', href: '/roadmap/' },
 ];

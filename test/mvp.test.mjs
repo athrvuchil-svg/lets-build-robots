@@ -37,19 +37,23 @@ test('beginner-first CSS is static and does not depend on JavaScript to hide spe
 
 test('catalog and Forge math protect the user-facing baseline', async () => {
   const catalog = JSON.parse(await read('src/data/components.json'));
-  assert.equal(catalog.length, 23);
-  for (const id of ['esp32-devkit-v1', 'mg90s-servo-x12', 'buck-5v-8a', 'mpu6050-imu', 'txs0108e-shifter', 'nema17-stepper', 'bme280-env', 'ec11-encoder']) assert.ok(catalog.some((part) => part.id === id));
+  assert.equal(catalog.length, 52);
+  for (const id of ['esp32-devkit-v1', 'mg90s-servo-x12', 'buck-5v-8a', 'mpu6050-imu', 'txs0108e-shifter', 'nema17-stepper', 'bme280-env', 'ec11-encoder', 'rp2040-pico-w', 'drv8825-driver', 'qtr-8a-line-array', '2wd-chassis', 'jumper-wire-kit']) assert.ok(catalog.some((part) => part.id === id));
   const servos = catalog.find((part) => part.id === 'mg90s-servo-x12');
   const lipo = catalog.find((part) => part.id === 'lipo-2s-2200');
   assert.equal(servos.stallA, 9.6);
   assert.equal(lipo.stallA, 45);
-  assert.match(await read('src/components/ComponentCatalog.astro'), /data-catalog-search/);
+  const componentCatalog = await read('src/components/ComponentCatalog.astro');
+  assert.match(componentCatalog, /data-catalog-search/);
+  for (const marker of ['data-catalog-kind', 'data-catalog-sort', 'data-catalog-role', 'data-catalog-status', 'data-region-link']) assert.match(componentCatalog, new RegExp(marker));
+  const forgePicker = await read('src/components/ForgePicker.astro');
+  for (const marker of ['rp2040-pico-w', 'drv8825-driver', 'qtr-8a-line-array', '2wd-chassis', 'jumper-wire-kit']) assert.match(forgePicker, new RegExp(marker));
   const forge = await read('src/components/ForgePicker.astro');
   assert.match(forge, /actuatorStallA/);
   assert.match(forge, /Quartz Components/);
 });
 
-test('all 23 catalog entries expose both real regional buy URLs', async () => {
+test('all catalog entries expose both real regional buy URLs', async () => {
   const catalog = JSON.parse(await read('src/data/components.json'));
   for (const part of catalog) {
     assert.match(part.in.url, /^https:\/\//, part.id);

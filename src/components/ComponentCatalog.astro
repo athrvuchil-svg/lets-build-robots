@@ -1,13 +1,100 @@
 ---
 import components from '../data/components.json';
+
+const kindLabels: Record<string, string> = {
+  MCU: 'Robot brains',
+  servo: 'Servos',
+  motor: 'DC motors',
+  stepper: 'Steppers',
+  driver: 'Motor drivers',
+  power: 'Power',
+  battery: 'Batteries',
+  sensor: 'Sensors',
+  safety: 'Safety',
+  input: 'Inputs',
+  mechanical: 'Mechanical',
+  wiring: 'Wiring',
+};
+const kinds = [...new Set(components.map((part) => part.kind))];
+const roles = [...new Set(components.map((part) => part.role))];
+const kindLabel = (kind: string) => kindLabels[kind] ?? kind;
+const fallbackUse: Record<string, string> = { MCU: 'controller board', servo: 'positioned joint', motor: 'wheeled drive', stepper: 'precise rotary motion', driver: 'motor or actuator control', power: 'regulated power rail', battery: 'portable power', sensor: 'robot feedback', safety: 'protective wiring', input: 'human control', mechanical: 'robot structure', wiring: 'prototyping and connections' };
 ---
 
-<section class="lbr-catalog" data-component-catalog><div class="lbr-catalog-head"><div><p class="lbr-kicker">23-part hardware catalog</p><h2>Find the part you actually need</h2><p class="lbr-muted-copy">Search by name, category, voltage, current, PWM, I²C address, or role. Expand a card for the electrical facts and a real vendor link.</p></div><div class="lbr-catalog-count"><strong>{components.length}</strong><span>baseline parts</span></div></div><label class="lbr-catalog-search"><span>Search hardware</span><input type="search" placeholder="Try: 3.3V, servo, 0x40, driver…" data-catalog-search /></label><div class="lbr-catalog-grid" data-catalog-grid>{components.map((part) => <article class="lbr-catalog-card" data-catalog-card data-search={`${part.part} ${part.kind} ${part.role} ${part.logicV ?? ''} ${part.signalV ?? ''} ${part.i2c ?? ''} ${part.stallA ?? ''} ${part.pwm ?? ''}`}><div class="lbr-catalog-card-top"><span class="lbr-chip">{part.role}</span><button type="button" data-expand aria-expanded="false">Details</button></div><h3>{part.part}</h3><p class="lbr-catalog-spec">{part.logicV ? `${part.logicV}V logic · ` : ''}{part.signalV ? `${part.signalV}V signal · ` : ''}{part.pwm ? `${part.pwm} PWM · ` : ''}{part.stallA ? `${part.stallA}A peak · ` : ''}{part.i2c ? `${part.i2c} · ` : ''}{part.weightG}g</p><div class="lbr-catalog-detail" hidden><p>Kind: <b>{part.kind}</b>. {part.i2c ? `I²C address ${part.i2c}. ` : ''}Check the exact board datasheet and breakout wiring before connecting.</p><div class="lbr-buy-grid"><a href={part.in.url} data-region-link data-in={part.in.url} data-us={part.us.url} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.in.store} · ₹{part.in.price} ↗</a><a href={part.us.url} data-region-link data-in={part.in.url} data-us={part.us.url} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.us.store} · ${part.us.price.toFixed(2)} ↗</a></div></div></article>)}</div><p class="lbr-catalog-empty" data-catalog-empty hidden>No parts match that search. Try “servo”, “ESP32”, or “5V”.</p></section>
+<section class="lbr-catalog" data-component-catalog>
+  <div class="lbr-catalog-head">
+    <div>
+      <p class="lbr-kicker">{components.length}-part hardware catalog</p>
+      <h2>Find the part you actually need</h2>
+      <p class="lbr-muted-copy">Search by name, category, voltage, current, PWM, I²C address, role, or job. Every card keeps the engineering facts visible and links to a regional source.</p>
+    </div>
+    <div class="lbr-catalog-count"><strong data-catalog-count>{components.length}</strong><span data-catalog-count-label>parts shown</span><small>retailer prices are snapshots</small></div>
+  </div>
+
+  <div class="lbr-catalog-toolbar">
+    <label class="lbr-catalog-search"><span>Search hardware</span><input type="search" placeholder="Try: 3.3V, servo, 0x40, wheel, driver…" data-catalog-search /></label>
+    <label class="lbr-catalog-select"><span>Category</span><select data-catalog-kind><option value="all">All categories</option>{kinds.map((kind) => <option value={kind}>{kindLabel(kind)}</option>)}</select></label>
+    <label class="lbr-catalog-select"><span>Sort by</span><select data-catalog-sort><option value="default">Recommended order</option><option value="name">Name</option><option value="price-in">India price</option><option value="price-us">USA price</option><option value="weight">Weight</option></select></label>
+  </div>
+  <div class="lbr-catalog-filters" role="group" aria-label="Filter component roles"><span>Job</span><button type="button" class="lbr-filter is-active" data-catalog-role="all">All</button>{roles.map((role) => <button type="button" class="lbr-filter" data-catalog-role={role}>{role}</button>)}</div>
+  <p class="lbr-catalog-status" data-catalog-status>Showing all {components.length} parts.</p>
+
+  <div class="lbr-catalog-grid" data-catalog-grid>
+    {components.map((part, index) => <article class="lbr-catalog-card" data-catalog-card data-index={index} data-kind={part.kind} data-role={part.role} data-price-in={part.in.price} data-price-us={part.us.price} data-weight={part.weightG} data-search={`${part.part} ${part.kind} ${part.role} ${part.logicV ?? ''} ${part.signalV ?? ''} ${part.i2c ?? ''} ${part.stallA ?? ''} ${part.maxContinuousA ?? ''} ${part.max5vA ?? ''} ${part.pwm ?? ''} ${part.weightG} ${fallbackUse[part.kind] ?? ''}`}>
+      <div class="lbr-catalog-card-top"><span class="lbr-chip">{part.role}</span><span class="lbr-catalog-kind">{kindLabel(part.kind)}</span><button type="button" data-expand aria-expanded="false">Details</button></div>
+      <h3>{part.part}</h3>
+      <p class="lbr-catalog-spec">{part.logicV ? `${part.logicV}V logic · ` : ''}{part.signalV ? `${part.signalV}V signal · ` : ''}{part.pwm ? `${part.pwm} PWM · ` : ''}{part.stallA ? `${part.stallA}A peak · ` : ''}{part.max5vA ? `${part.max5vA}A rail · ` : ''}{part.i2c ? `${part.i2c} · ` : ''}{part.weightG}g</p>
+      <p class="lbr-catalog-use">Best for: {fallbackUse[part.kind] ?? 'robot builds'}</p>
+      <div class="lbr-catalog-detail" hidden>
+        <p>Kind: <b>{part.kind}</b>. {part.i2c ? `I²C address ${part.i2c}. ` : ''}{part.signalV ? `${part.signalV}V signal needs compatible inputs. ` : ''}Check the exact board datasheet and breakout wiring before connecting.</p>
+        <div class="lbr-buy-grid"><a href={part.in.url} data-region-link data-in={part.in.url} data-us={part.us.url} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.in.store} · ₹{part.in.price} ↗</a><a href={part.us.url} data-region-link data-in={part.in.url} data-us={part.us.url} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.us.store} · ${part.us.price.toFixed(2)} ↗</a></div>
+      </div>
+    </article>)}
+  </div>
+  <p class="lbr-catalog-empty" data-catalog-empty hidden>No parts match those filters. Try a broader search or choose “All categories”.</p>
+</section>
 
 <script>
   // @ts-nocheck
-  const catalogRoot = document.querySelector('[data-component-catalog]'); const search = catalogRoot?.querySelector('[data-catalog-search]'); const cards = [...(catalogRoot?.querySelectorAll('[data-catalog-card]') ?? [])]; const empty = catalogRoot?.querySelector('[data-catalog-empty]');
-  function filter() { const term = search?.value.trim().toLowerCase() ?? ''; let visible = 0; cards.forEach((card) => { const show = !term || card.dataset.search.toLowerCase().includes(term); card.hidden = !show; if (show) visible += 1; }); if (empty) empty.hidden = visible > 0; }
-  search?.addEventListener('input', filter); cards.forEach((card) => card.querySelector('[data-expand]')?.addEventListener('click', () => { const detail = card.querySelector('.lbr-catalog-detail'); const button = card.querySelector('[data-expand]'); const open = button.getAttribute('aria-expanded') === 'true'; button.setAttribute('aria-expanded', String(!open)); button.textContent = open ? 'Details' : 'Hide details'; detail.hidden = open; }));
-  function updateLinks(region) { catalogRoot?.querySelectorAll('[data-region-link]').forEach((link) => { link.href = region === 'US' ? link.dataset.us : link.dataset.in; }); } updateLinks(localStorage.getItem('lbr-region') === 'US' ? 'US' : 'IN'); window.addEventListener('lbr:region-change', (event) => updateLinks(event.detail));
+  const catalogRoot = document.querySelector('[data-component-catalog]');
+  const search = catalogRoot?.querySelector('[data-catalog-search]');
+  const kind = catalogRoot?.querySelector('[data-catalog-kind]');
+  const sort = catalogRoot?.querySelector('[data-catalog-sort]');
+  const grid = catalogRoot?.querySelector('[data-catalog-grid]');
+  const cards = [...(catalogRoot?.querySelectorAll('[data-catalog-card]') ?? [])];
+  const empty = catalogRoot?.querySelector('[data-catalog-empty]');
+  const count = catalogRoot?.querySelector('[data-catalog-count]');
+  const status = catalogRoot?.querySelector('[data-catalog-status]');
+  let activeRole = 'all';
+
+  function sortCards(items) {
+    const value = sort?.value ?? 'default';
+    return [...items].sort((a, b) => {
+      if (value === 'name') return a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent);
+      if (value === 'price-in') return Number(a.dataset.priceIn) - Number(b.dataset.priceIn);
+      if (value === 'price-us') return Number(a.dataset.priceUs) - Number(b.dataset.priceUs);
+      if (value === 'weight') return Number(a.dataset.weight) - Number(b.dataset.weight);
+      return Number(a.dataset.index) - Number(b.dataset.index);
+    });
+  }
+  function filter() {
+    const term = search?.value.trim().toLowerCase() ?? '';
+    const selectedKind = kind?.value ?? 'all';
+    const visible = cards.filter((card) => {
+      const show = (!term || card.dataset.search.toLowerCase().includes(term)) && (selectedKind === 'all' || card.dataset.kind === selectedKind) && (activeRole === 'all' || card.dataset.role === activeRole);
+      card.hidden = !show;
+      return show;
+    });
+    sortCards(visible).forEach((card) => grid?.append(card));
+    if (count) count.textContent = String(visible.length);
+    if (status) status.textContent = visible.length === cards.length ? `Showing all ${cards.length} parts.` : `Showing ${visible.length} of ${cards.length} parts.`;
+    if (empty) empty.hidden = visible.length > 0;
+  }
+  search?.addEventListener('input', filter); kind?.addEventListener('change', filter); sort?.addEventListener('change', filter);
+  catalogRoot?.querySelectorAll('[data-catalog-role]').forEach((button) => button.addEventListener('click', () => { activeRole = button.dataset.catalogRole ?? 'all'; catalogRoot.querySelectorAll('[data-catalog-role]').forEach((item) => item.classList.toggle('is-active', item === button)); filter(); }));
+  cards.forEach((card) => card.querySelector('[data-expand]')?.addEventListener('click', () => { const detail = card.querySelector('.lbr-catalog-detail'); const button = card.querySelector('[data-expand]'); const open = button.getAttribute('aria-expanded') === 'true'; button.setAttribute('aria-expanded', String(!open)); button.textContent = open ? 'Details' : 'Hide details'; detail.hidden = open; }));
+  function updateLinks(region) { catalogRoot?.querySelectorAll('[data-region-link]').forEach((link) => { link.href = region === 'US' ? link.dataset.us : link.dataset.in; }); }
+  updateLinks(localStorage.getItem('lbr-region') === 'US' ? 'US' : 'IN');
+  window.addEventListener('lbr:region-change', (event) => updateLinks(event.detail));
+  filter();
 </script>
