@@ -7,14 +7,21 @@ export function forgeMetrics(parts, region = 'IN', wifi = true) {
   const mcu = parts.find((part) => part.kind === 'MCU');
   const batteries = parts.filter((part) => part.kind === 'battery');
   const actuators = parts.filter((part) => ['servo', 'motor', 'stepper'].includes(part.kind));
+  const motors = parts.filter((part) => part.kind === 'motor');
+  const steppers = parts.filter((part) => part.kind === 'stepper');
+  const regulators = parts.filter((part) => part.kind === 'power' && (part.max5vA || 0) > 0);
+  const motionDrivers = parts.filter((part) => part.kind === 'driver' && part.id !== 'pca9685-16ch');
   const servoStallA = parts.filter((part) => part.kind === 'servo').reduce((sum, part) => sum + (part.stallA || 0), 0);
   const actuatorStallA = actuators.reduce((sum, part) => sum + (part.stallA || 0), 0);
   const pwmNeeded = actuators.reduce((sum, part) => sum + (part.pwm || 0), 0);
   const pwmAvailable = (mcu?.pwm || 0) + (ids.has('pca9685-16ch') ? 16 : 0);
   const requiredSupplyA = actuatorStallA * 1.25;
   const maxBatteryA = batteries.length ? Math.max(...batteries.map((part) => part.maxContinuousA ?? part.stallA ?? 0)) : 0;
-  const regulator = parts.find((part) => part.id === 'buck-5v-8a');
-  const railCapacity = regulator?.max5vA || 0;
+  const railCapacity = regulators.length ? Math.max(...regulators.map((part) => part.max5vA || 0)) : 0;
+  const driverCapacity = motionDrivers.length ? Math.max(...motionDrivers.map((part) => part.driverMaxA || 0)) : 0;
+  const highVoltageSignals = parts.filter((part) => (part.signalV || 0) > 3.3);
+  const builtInStepperDriver = steppers.some((part) => part.id === '28byj48-stepper');
+  const needsMotionDriver = (motors.length > 0 || (steppers.length > 0 && !builtInStepperDriver)) && motionDrivers.length === 0;
   const hasI2cClash = parts.filter((part) => part.i2c).reduce((map, part) => {
     map[part.i2c] = (map[part.i2c] || 0) + 1;
     return map;
@@ -27,22 +34,25 @@ export function forgeMetrics(parts, region = 'IN', wifi = true) {
   if (actuatorStallA && !batteries.length) failures.push('🛑 No battery selected: add a supported power source.');
   else if (actuatorStallA && requiredSupplyA > maxBatteryA) failures.push(`🛑 Battery headroom is short: ${requiredSupplyA.toFixed(1)}A needed, ${maxBatteryA.toFixed(1)}A rated.`);
   else if (actuatorStallA) ok.push('✅ Battery headroom passes');
-  if (servoStallA > 0.6 && !regulator) failures.push(`🛑 Servo rail risk: ${servoStallA.toFixed(1)}A stall current cannot come from the controller 5V rail.`);
+  if (servoStallA > 0.6 && !regulators.length) failures.push(`🛑 Servo rail risk: ${servoStallA.toFixed(1)}A stall current cannot come from the controller 5V rail.`);
   else if (servoStallA && servoStallA * 1.25 > railCapacity) failures.push(`🛑 5V regulator overload: ${(servoStallA * 1.25).toFixed(1)}A required, ${railCapacity.toFixed(1)}A rated.`);
   else if (servoStallA) ok.push('✅ Separate servo rail passes');
   if (pwmNeeded >= 8 && !ids.has('pca9685-16ch')) warnings.push(`⚠️ ${pwmNeeded} PWM channels requested: add the PCA9685.`);
   else if (pwmNeeded) ok.push('✅ PWM budget passes');
-  if (ids.has('esp32-devkit-v1') && ids.has('hcsr04-5v') && !ids.has('txs0108e-shifter')) failures.push('🛑 HC-SR04 Echo is 5V; protect the 3.3V ESP32 input with TXS0108E or a suitable divider.');
+  if (mcu?.logicV === 3.3 && highVoltageSignals.length && !ids.has('txs0108e-shifter')) failures.push(`🛑 ${highVoltageSignals.map((part) => part.part).join(', ')} expose 5V signals; protect the 3.3V input with TXS0108E or a suitable divider.`);
   if (wifi && ids.has('esp32-devkit-v1')) warnings.push('📡 Wi-Fi is on: use ADC1 GPIO 32–39 for analog sensors; ADC2 is unavailable during Wi-Fi.');
   if (clashes.length) failures.push(`🛑 I²C collision at ${clashes.join(', ')}: change MPU-6050 AD0 or a device address jumper.`);
   else if (parts.some((part) => part.i2c)) ok.push('✅ I²C addresses are unique');
+  if (needsMotionDriver) failures.push('🛑 Add a motor or stepper driver before wiring an actuator that cannot be driven directly by the MCU.');
+  if (steppers.length && driverCapacity && Math.max(...steppers.map((part) => part.stallA || 0)) > driverCapacity) failures.push(`🛑 Driver current is short: the selected stepper needs ${Math.max(...steppers.map((part) => part.stallA || 0)).toFixed(1)}A, but the selected driver is rated ${driverCapacity.toFixed(1)}A.`);
+  if (regulators.length > 1) warnings.push(`⚠️ ${regulators.length} regulated 5V sources selected: do not parallel outputs unless the datasheets explicitly allow it.`);
   if (ids.has('l298n-driver')) warnings.push('🔥 L298N is lossy and hot; a MOSFET driver is the cooler choice.');
   const price = (part) => region === 'US' ? part.us.price : part.in.price;
   const total = parts.reduce((sum, part) => sum + price(part), 0);
   const threshold = region === 'US' ? 35 : 500;
   const shipping = total < threshold ? (region === 'US' ? 5.99 : 60) : 0;
   const weight = parts.reduce((sum, part) => sum + (part.weightG || 0), 110);
-  return { failures, warnings, ok, mcu, actuatorStallA, servoStallA, pwmNeeded, pwmAvailable, requiredSupplyA, maxBatteryA, weight, total, threshold, shipping, clashes };
+  return { failures, warnings, ok, mcu, actuatorStallA, servoStallA, pwmNeeded, pwmAvailable, requiredSupplyA, maxBatteryA, railCapacity, driverCapacity, weight, total, threshold, shipping, clashes, highVoltageSignals, regulators, motionDrivers };
 }
 
 export function batteryRuntime({ capacityMah = 2200, cells = 2, cRating = 30, drawA = 1, stallA = 5 }) {

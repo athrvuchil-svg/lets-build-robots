@@ -17,6 +17,13 @@ test('all six LBR views exist and expose their primary route content', async () 
   for (const [path, marker] of routes) assert.match(await read(path), new RegExp(marker));
 });
 
+test('public product copy stays aligned with the live catalog size', async () => {
+  const catalog = JSON.parse(await read('src/data/components.json'));
+  assert.match(await read('README.md'), new RegExp(`${catalog.length}-part hardware catalog`));
+  assert.match(await read('src/pages/index.mdx'), new RegExp(`<b>${catalog.length}<\\/b> mapped parts`));
+  assert.match(await read('src/pages/forge/index.mdx'), /components\.length/);
+});
+
 test('deterministic safety and lifecycle contracts are present', async () => {
   const forge = await read('src/components/ForgePicker.astro');
   const registry = await read('src/utils/islandRegistry.ts');
@@ -45,9 +52,11 @@ test('catalog and Forge math protect the user-facing baseline', async () => {
   assert.equal(lipo.stallA, 45);
   const componentCatalog = await read('src/components/ComponentCatalog.astro');
   assert.match(componentCatalog, /data-catalog-search/);
-  for (const marker of ['data-catalog-kind', 'data-catalog-sort', 'data-catalog-role', 'data-catalog-status', 'data-region-link']) assert.match(componentCatalog, new RegExp(marker));
+  for (const marker of ['data-catalog-kind', 'data-catalog-sort', 'data-catalog-role', 'data-catalog-status', 'data-catalog-copy', 'data-catalog-copy-status', 'data-region-link', 'Add to Forge', 'directProductLinks', 'spiderbot-good', 'esp32-safe']) assert.match(componentCatalog, new RegExp(marker));
   const forgePicker = await read('src/components/ForgePicker.astro');
   for (const marker of ['rp2040-pico-w', 'drv8825-driver', 'qtr-8a-line-array', '2wd-chassis', 'jumper-wire-kit']) assert.match(forgePicker, new RegExp(marker));
+  assert.match(forgePicker, /requestedIds/);
+  assert.match(await read('src/pages/forge/index.mdx'), /components\.length/);
   const forge = await read('src/components/ForgePicker.astro');
   assert.match(forge, /actuatorStallA/);
   assert.match(forge, /Quartz Components/);
@@ -77,6 +86,12 @@ test('pure calculators and Forge presets produce observable engineering results'
   assert.equal(good.pwmNeeded, 12);
   const bad = forgeMetrics(pick('esp32-devkit-v1', 'mg90s-servo-x12', 'bat-9v-alkaline', 'hcsr04-5v'));
   assert.ok(bad.failures.length >= 2);
+  const motorWithoutDriver = forgeMetrics(pick('esp32-devkit-v1', 'dc-gearmotor-12v', 'lipo-2s-2200'));
+  assert.ok(motorWithoutDriver.failures.some((message) => message.includes('motor or stepper driver')));
+  const highVoltageSensor = forgeMetrics(pick('esp32-devkit-v1', 'qtr-8a-line-array', 'lipo-2s-2200'));
+  assert.ok(highVoltageSensor.failures.some((message) => message.includes('5V signals')));
+  const protectedSensor = forgeMetrics(pick('esp32-devkit-v1', 'qtr-8a-line-array', 'txs0108e-shifter', 'lipo-2s-2200'));
+  assert.equal(protectedSensor.failures.some((message) => message.includes('5V signals')), false);
   assert.ok(batteryRuntime({ capacityMah: 2200, cells: 2, cRating: 30, drawA: 2, stallA: 9.6 }).pass);
   assert.ok(servoTorque({ armCm: 10, payloadG: 100, linkG: 50, margin: 1.5 }).kgCm > 0);
   assert.ok(Math.abs(divider({ sourceV: 5, targetV: 3.3, r1K: 10 }).actualV - 3.3) < 0.01);

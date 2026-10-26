@@ -19,6 +19,15 @@ const kinds = [...new Set(components.map((part) => part.kind))];
 const roles = [...new Set(components.map((part) => part.role))];
 const kindLabel = (kind: string) => kindLabels[kind] ?? kind;
 const fallbackUse: Record<string, string> = { MCU: 'controller board', servo: 'positioned joint', motor: 'wheeled drive', stepper: 'precise rotary motion', driver: 'motor or actuator control', power: 'regulated power rail', battery: 'portable power', sensor: 'robot feedback', safety: 'protective wiring', input: 'human control', mechanical: 'robot structure', wiring: 'prototyping and connections' };
+const directProductLinks = components.filter((part) => !part.in.url.includes('?s=') && !part.us.url.includes('?s=')).length;
+const i2cParts = components.filter((part) => part.i2c).length;
+const actuatorParts = components.filter((part) => ['servo', 'motor', 'stepper'].includes(part.kind)).length;
+const buildPaths = [
+  ['Walk', 'Spiderbot power + servo path', 'spiderbot-good'],
+  ['Roll', 'Conveyor motor + sensor path', 'conveyor'],
+  ['Sense', 'ESP32 sensor starter path', 'esp32-safe'],
+  ['Inspect', 'Start empty and choose parts yourself', 'clear'],
+];
 ---
 
 <section class="lbr-catalog" data-component-catalog>
@@ -28,16 +37,19 @@ const fallbackUse: Record<string, string> = { MCU: 'controller board', servo: 'p
       <h2>Find the part you actually need</h2>
       <p class="lbr-muted-copy">Search by name, category, voltage, current, PWM, I²C address, role, or job. Every card keeps the engineering facts visible and links to a regional source.</p>
     </div>
-    <div class="lbr-catalog-count"><strong data-catalog-count>{components.length}</strong><span data-catalog-count-label>parts shown</span><small>retailer prices are snapshots</small></div>
+    <div class="lbr-catalog-count"><strong data-catalog-count>{components.length}</strong><span data-catalog-count-label>parts shown</span><small>{directProductLinks} direct product links · {i2cParts} I²C parts · {actuatorParts} actuator kits</small></div>
   </div>
 
   <div class="lbr-catalog-toolbar">
     <label class="lbr-catalog-search"><span>Search hardware</span><input type="search" placeholder="Try: 3.3V, servo, 0x40, wheel, driver…" data-catalog-search /></label>
     <label class="lbr-catalog-select"><span>Category</span><select data-catalog-kind><option value="all">All categories</option>{kinds.map((kind) => <option value={kind}>{kindLabel(kind)}</option>)}</select></label>
     <label class="lbr-catalog-select"><span>Sort by</span><select data-catalog-sort><option value="default">Recommended order</option><option value="name">Name</option><option value="price-in">India price</option><option value="price-us">USA price</option><option value="weight">Weight</option></select></label>
+    <button class="lbr-catalog-copy lbr-button lbr-button-quiet" type="button" data-catalog-copy>Copy visible parts</button>
   </div>
+  <div class="lbr-catalog-paths" aria-label="Build paths">{buildPaths.map(([label, description, preset]) => <a href={`/forge/?preset=${preset}`}><span>{label}</span><small>{description}</small><b>Open Forge →</b></a>)}</div>
   <div class="lbr-catalog-filters" role="group" aria-label="Filter component roles"><span>Job</span><button type="button" class="lbr-filter is-active" data-catalog-role="all">All</button>{roles.map((role) => <button type="button" class="lbr-filter" data-catalog-role={role}>{role}</button>)}</div>
   <p class="lbr-catalog-status" data-catalog-status>Showing all {components.length} parts.</p>
+  <p class="lbr-copy-status" data-catalog-copy-status role="status" aria-live="polite"></p>
 
   <div class="lbr-catalog-grid" data-catalog-grid>
     {components.map((part, index) => <article class="lbr-catalog-card" data-catalog-card data-index={index} data-kind={part.kind} data-role={part.role} data-price-in={part.in.price} data-price-us={part.us.price} data-weight={part.weightG} data-search={`${part.part} ${part.kind} ${part.role} ${part.logicV ?? ''} ${part.signalV ?? ''} ${part.i2c ?? ''} ${part.stallA ?? ''} ${part.maxContinuousA ?? ''} ${part.max5vA ?? ''} ${part.pwm ?? ''} ${part.weightG} ${fallbackUse[part.kind] ?? ''}`}>
@@ -47,6 +59,7 @@ const fallbackUse: Record<string, string> = { MCU: 'controller board', servo: 'p
       <p class="lbr-catalog-use">Best for: {fallbackUse[part.kind] ?? 'robot builds'}</p>
       <div class="lbr-catalog-detail" hidden>
         <p>Kind: <b>{part.kind}</b>. {part.i2c ? `I²C address ${part.i2c}. ` : ''}{part.signalV ? `${part.signalV}V signal needs compatible inputs. ` : ''}Check the exact board datasheet and breakout wiring before connecting.</p>
+        <div class="lbr-catalog-detail-actions"><a class="lbr-button lbr-button-primary lbr-catalog-forge-link" href={`/forge/?add=${part.id}`}>＋ Add to Forge</a><span class="lbr-catalog-source-note">{part.in.url.includes('?s=') || part.us.url.includes('?s=') ? 'Search source · verify exact SKU' : 'Direct product source'}</span></div>
         <div class="lbr-buy-grid"><a href={part.in.url} data-region-link data-in={part.in.url} data-us={part.us.url} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.in.store} · ₹{part.in.price} ↗</a><a href={part.us.url} data-region-link data-in={part.in.url} data-us={part.us.url} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.us.store} · ${part.us.price.toFixed(2)} ↗</a></div>
       </div>
     </article>)}
@@ -65,6 +78,8 @@ const fallbackUse: Record<string, string> = { MCU: 'controller board', servo: 'p
   const empty = catalogRoot?.querySelector('[data-catalog-empty]');
   const count = catalogRoot?.querySelector('[data-catalog-count]');
   const status = catalogRoot?.querySelector('[data-catalog-status]');
+  const copyButton = catalogRoot?.querySelector('[data-catalog-copy]');
+  const copyStatus = catalogRoot?.querySelector('[data-catalog-copy-status]');
   let activeRole = 'all';
 
   function sortCards(items) {
@@ -91,6 +106,7 @@ const fallbackUse: Record<string, string> = { MCU: 'controller board', servo: 'p
     if (empty) empty.hidden = visible.length > 0;
   }
   search?.addEventListener('input', filter); kind?.addEventListener('change', filter); sort?.addEventListener('change', filter);
+  copyButton?.addEventListener('click', async () => { const visible = cards.filter((card) => !card.hidden).map((card) => card.querySelector('h3')?.textContent?.trim()).filter(Boolean).join('\n'); try { await navigator.clipboard.writeText(visible || 'No visible parts'); if (copyStatus) copyStatus.textContent = `${visible ? visible.split('\n').length : 0} part names copied.`; } catch { if (copyStatus) copyStatus.textContent = 'Copy is blocked here; select the visible cards manually.'; } });
   catalogRoot?.querySelectorAll('[data-catalog-role]').forEach((button) => button.addEventListener('click', () => { activeRole = button.dataset.catalogRole ?? 'all'; catalogRoot.querySelectorAll('[data-catalog-role]').forEach((item) => item.classList.toggle('is-active', item === button)); filter(); }));
   cards.forEach((card) => card.querySelector('[data-expand]')?.addEventListener('click', () => { const detail = card.querySelector('.lbr-catalog-detail'); const button = card.querySelector('[data-expand]'); const open = button.getAttribute('aria-expanded') === 'true'; button.setAttribute('aria-expanded', String(!open)); button.textContent = open ? 'Details' : 'Hide details'; detail.hidden = open; }));
   function updateLinks(region) { catalogRoot?.querySelectorAll('[data-region-link]').forEach((link) => { link.href = region === 'US' ? link.dataset.us : link.dataset.in; }); }

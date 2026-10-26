@@ -4,9 +4,10 @@ title: Components Library
 
 import TopUtilityBar from '../../components/TopUtilityBar.astro';
 import ComponentCatalog from '../../components/ComponentCatalog.astro';
+import components from '../../data/components.json';
 import '../../styles/custom.css';
 import LbrLayout from '../../layouts/LbrLayout.astro';
 
 <LbrLayout title="Components Library" description="Search practical electronics and robotics components by job, voltage, current, PWM, and I²C address." path="/components/">
-<div class="lbr-page-shell not-content"><TopUtilityBar activeView="components" /><section class="lbr-page-hero"><div><p class="lbr-eyebrow"><span class="lbr-pulse"></span> Hardware reference</p><h1>Every part has a <span>job.</span></h1><p class="lbr-page-lede">Search a practical electronics and robotics catalog, filter by job or category, open a part for its limits, then move to the Forge when you are ready to assemble a safe bill of materials.</p></div><div class="lbr-page-hero-note"><strong>52</strong><span>clickable mapped parts</span><small>prices + engineering facts</small></div></section><ComponentCatalog /></div>
+<div class="lbr-page-shell not-content"><TopUtilityBar activeView="components" /><section class="lbr-page-hero"><div><p class="lbr-eyebrow"><span class="lbr-pulse"></span> Hardware reference</p><h1>Every part has a <span>job.</span></h1><p class="lbr-page-lede">Search a practical electronics and robotics catalog, filter by job or category, open a part for its limits, then move to the Forge when you are ready to assemble a safe bill of materials.</p></div><div class="lbr-page-hero-note"><strong>{components.length}</strong><span>clickable mapped parts</span><small>{new Set(components.map((part) => part.kind)).size} component families · prices + engineering facts</small></div></section><ComponentCatalog /></div>
 </LbrLayout>

@@ -4,9 +4,10 @@ title: The Forge
 
 import TopUtilityBar from '../../components/TopUtilityBar.astro';
 import ForgePicker from '../../components/ForgePicker.astro';
+import components from '../../data/components.json';
 import '../../styles/custom.css';
 import LbrLayout from '../../layouts/LbrLayout.astro';
 
 <LbrLayout title="The Forge" description="Build a robotics bill of materials with deterministic power, PWM, voltage, I²C, and shipping checks." path="/forge/">
-<div class="lbr-page-shell not-content"><TopUtilityBar activeView="forge" /><section class="lbr-page-hero"><div><p class="lbr-eyebrow"><span class="lbr-pulse"></span> Deterministic build planner</p><h1>Wire it in the <span>Forge.</span></h1><p class="lbr-page-lede">Build a safe parts list with power, pins, PWM, I²C, real retailer links, and shipping checks before you buy or wire anything.</p></div><div class="lbr-page-hero-note"><strong>23</strong><span>clickable baseline parts</span><small>India + USA pricing</small></div></section><ForgePicker /></div>
+<div class="lbr-page-shell not-content"><TopUtilityBar activeView="forge" /><section class="lbr-page-hero"><div><p class="lbr-eyebrow"><span class="lbr-pulse"></span> Deterministic build planner</p><h1>Wire it in the <span>Forge.</span></h1><p class="lbr-page-lede">Build a safe parts list with power, pins, PWM, I²C, real retailer links, and shipping checks before you buy or wire anything.</p></div><div class="lbr-page-hero-note"><strong>{components.length}</strong><span>clickable mapped parts</span><small>India + USA pricing</small></div></section><ForgePicker /></div>
 </LbrLayout>

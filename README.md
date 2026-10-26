@@ -7,8 +7,8 @@ Let's Build Robots is a solo, student-led beginner robotics learning platform cr
 LBR is a browser-first robotics learning lab with a clear public promise:
 
 - four local canvas labs for walking, reaching, PID steering, and radar/conveyor behavior;
-- a deterministic Forge that checks power, PWM, voltage, I²C, weight, pricing, and delivery;
-- a 23-part hardware catalog with regional vendor links;
+- a deterministic Forge that checks power, PWM, voltage, I²C, driver compatibility, weight, pricing, and delivery;
+- a 52-part hardware catalog with search, filters, build-path shortcuts, regional vendor links, and Forge handoff;
 - six client-side robotics calculators;
 - an isometric pose-to-code playground for Arduino, ESP32, and ROS 2 learners;
 - mistake-saving ESP32 pin guidance and a practical learning roadmap.
