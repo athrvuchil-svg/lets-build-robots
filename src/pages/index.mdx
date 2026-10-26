@@ -7,6 +7,7 @@ template: splash
 import TopUtilityBar from '../components/TopUtilityBar.astro';
 import LocalQuestionBox from '../components/LocalQuestionBox.astro';
 import LocalSimulatorWorkspace from '../components/LocalSimulatorWorkspace.astro';
+import PartnerCTA from '../components/PartnerCTA.astro';
 import '../styles/custom.css';
 import LbrLayout from '../layouts/LbrLayout.astro';
 
@@ -45,6 +46,7 @@ import LbrLayout from '../layouts/LbrLayout.astro';
     <section class="lbr-marketing-section lbr-final-cta" aria-labelledby="final-title"><div><p class="lbr-kicker">Ready when you are</p><h2 id="final-title">Make your next robot decision a better one.</h2><p>Start in the browser. Leave with a clearer build plan.</p></div><div class="lbr-final-actions"><a class="lbr-button lbr-button-primary" href="/robots/">Open the lab ↗</a><a class="lbr-button lbr-button-quiet" href="/roadmap/">See the roadmap</a></div></section>
 
     <section class="lbr-community-card lbr-marketing-community" aria-labelledby="community-title"><div class="lbr-community-heading"><div><p class="lbr-kicker">Build in public, carefully</p><h3 id="community-title">Ask a small question. Keep the answer.</h3></div><span class="lbr-local-badge">SAVED IN THIS BROWSER</span></div><div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>What changed when your robot finally worked?</strong><p>Keep a short build note: the part, the measurement, and the next thing you would test.</p><span data-question-list>Starter guidance is ready.</span></div></div><LocalQuestionBox /></section>
+    <PartnerCTA />
   </main>
   <footer class="lbr-footer"><span><b>LBR</b> · Let's Build Robots</span><span>Open source · browser-first · built to be shared</span></footer>
 </div>

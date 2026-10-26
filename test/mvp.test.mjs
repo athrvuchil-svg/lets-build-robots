@@ -22,6 +22,9 @@ test('public product copy stays aligned with the live catalog size', async () =>
   assert.match(await read('README.md'), new RegExp(`${catalog.length}-part hardware catalog`));
   assert.match(await read('src/pages/index.mdx'), new RegExp(`<b>${catalog.length}<\\/b> mapped parts`));
   assert.match(await read('src/pages/forge/index.mdx'), /components\.length/);
+  const partner = await read('src/components/PartnerCTA.astro');
+  assert.match(partner, /partnership inquiry/i);
+  assert.match(partner, /Affiliate or sponsor credentials/);
 });
 
 test('deterministic safety and lifecycle contracts are present', async () => {
@@ -75,7 +78,10 @@ test('all catalog entries expose both real regional buy URLs', async () => {
   assert.match(sim, /pointerdown/);
   assert.match(sim, /radarDistance = Number\(el\.value\)/);
   assert.match(sim, /function drawCurrent/);
-  assert.match(sim, /renderControls\(\); renderDetail\(\); drawCurrent\(0\)/);
+  assert.match(sim, /renderControls\(\); renderDetail\(\); if \(!ctx\)/);
+  assert.match(sim, /Math\.max\(-1, Math\.min\(1/);
+  assert.match(sim, /Canvas unavailable/);
+  assert.match(sim, /releasePointerCapture/);
 });
 
 test('pure calculators and Forge presets produce observable engineering results', async () => {
