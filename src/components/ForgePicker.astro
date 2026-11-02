@@ -1,5 +1,8 @@
 ---
 import components from '../data/components.json';
+import { commerceConfig, decorateCatalog } from '../utils/commerce.mjs';
+
+const linkedComponents = decorateCatalog(components, commerceConfig(import.meta.env));
 
 const groups: [string, string[]][] = [
   ['1. Robot Brains', ['esp32-devkit-v1', 'arduino-uno-r3', 'esp8266-nodemcu', 'arduino-nano', 'rp2040-pico-w']],
@@ -15,8 +18,8 @@ const presets = {
   'esp32-safe': ['esp32-devkit-v1', 'mpu6050-imu', 'hcsr04-5v', 'txs0108e-shifter', 'lipo-2s-2200', 'buck-5v-8a'],
   clear: [],
 };
-const partById = Object.fromEntries(components.map((part) => [part.id, part]));
-const catalogJson = JSON.stringify(components);
+const partById = Object.fromEntries(linkedComponents.map((part) => [part.id, part]));
+const catalogJson = JSON.stringify(linkedComponents);
 ---
 
 <div class="not-content" data-forge>
@@ -26,7 +29,7 @@ const catalogJson = JSON.stringify(components);
   <div class="lbr-preset-strip" data-presets aria-label="Forge presets"><button class="lbr-preset-button" data-preset="spiderbot-good">✅ Load Working Spiderbot Kit</button><button class="lbr-preset-button" data-preset="spiderbot-bad">⚠️ See Common Beginner Mistake</button><button class="lbr-preset-button" data-preset="conveyor">⚙️ Load Conveyor Kit</button><button class="lbr-preset-button" data-preset="esp32-safe">📡 Safe ESP32 Starter Kit</button><button class="lbr-preset-button" data-preset="clear">↺ Clear</button></div>
   <div class="grid gap-6 lg:grid-cols-[1.25fr_.75fr]">
     <section class="space-y-5">
-      {groups.map(([title, ids]) => <div class="lbr-card p-5"><p class="lbr-kicker">{title}</p><div class="mt-3 grid gap-3 sm:grid-cols-2">{ids.map((id) => { const component = partById[id]; return component && <label class="lbr-part-card" data-part-card={component.id}><input type="checkbox" value={component.id} data-part /><span><strong>{component.part}</strong><small data-price data-in={`${component.in.store} · ₹${component.in.price}`} data-us={`${component.us.store} · $${component.us.price.toFixed(2)}`}>{component.in.store} · ₹{component.in.price}</small><span class="lbr-buy-row"><a href={component.in.url} data-buy-link data-in-url={component.in.url} data-us-url={component.us.url} target="_blank" rel="noopener noreferrer">🛒 Buy on {component.in.store} ↗</a></span><span class="eng-only-inline font-mono text-[10px]">{component.kind}{component.i2c ? ` · ${component.i2c}` : ''}{component.logicV ? ` · ${component.logicV}V logic` : ''}{component.signalV ? ` · ${component.signalV}V signal` : ''}</span></span></label>; })}</div></div>)}
+     {groups.map(([title, ids]) => <div class="lbr-card p-5"><p class="lbr-kicker">{title}</p><div class="mt-3 grid gap-3 sm:grid-cols-2">{ids.map((id) => { const component = partById[id]; return component && <label class="lbr-part-card" data-part-card={component.id}><input type="checkbox" value={component.id} data-part /><span><strong>{component.part}</strong><small data-price data-in={`${component.in.store} · ₹${component.in.price}`} data-us={`${component.us.store} · $${component.us.price.toFixed(2)}`}>{component.in.store} · ₹{component.in.price}</small><span class="lbr-buy-row"><a href={component.in.url} data-buy-link data-in-url={component.in.url} data-us-url={component.us.url} data-commerce-link data-merchant={component.in.store} target="_blank" rel="noopener noreferrer">🛒 Buy on {component.in.store} ↗</a></span><span class="eng-only-inline font-mono text-[10px]">{component.kind}{component.i2c ? ` · ${component.i2c}` : ''}{component.logicV ? ` · ${component.logicV}V logic` : ''}{component.signalV ? ` · ${component.signalV}V signal` : ''}</span></span></label>; })}</div></div>)}
     </section>
     <aside class="lbr-card lbr-build-report" aria-live="polite"><div class="flex items-center justify-between"><div><p class="lbr-kicker">Build report</p><h2 class="text-2xl font-bold">Know before you wire</h2></div><span data-status-badge class="lbr-status-badge">READY</span></div><div class="lbr-metric-grid" data-metrics></div><div class="mt-4 space-y-2" data-rules></div><div class="mt-5" data-bom></div><div class="mt-4" data-orders></div><button class="lbr-button lbr-button-primary mt-4" type="button" data-copy-bom>📋 Copy Shopping List</button><span class="lbr-copy-status" data-copy-status role="status" aria-live="polite"></span></aside>
   </div>
@@ -35,6 +38,7 @@ const catalogJson = JSON.stringify(components);
 <script>
   // @ts-nocheck
   import { forgeMetrics } from '../utils/robotMath.mjs';
+  import { bindPresetButtons, applyPresetSelection } from '../utils/forgeUi.mjs';
   const catalog = JSON.parse(document.querySelector('[data-forge-catalog]')?.textContent || '[]');
   const presetMap = JSON.parse(document.querySelector('[data-forge-presets]')?.textContent || '{}');
   const root = document.querySelector('[data-forge]');
@@ -69,8 +73,8 @@ const catalogJson = JSON.stringify(components);
     root?.querySelectorAll('[data-part-card]').forEach((cardNode) => cardNode.classList.toggle('is-selected', Boolean(cardNode.querySelector('input')?.checked)));
     localStorage.setItem('lbr-forge-selection', JSON.stringify(parts.map((part) => part.id)));
   }
-  function applyPreset(name) { const ids = presetMap[name] ?? []; inputs.forEach((input) => { input.checked = ids.includes(input.value); }); root?.querySelectorAll('[data-preset]').forEach((button) => button.classList.toggle('is-active', button.dataset.preset === name)); update(); }
-  root?.querySelectorAll('[data-preset]').forEach((button) => button.addEventListener('click', () => { const name = button.dataset.preset ?? 'clear'; applyPreset(name); history.replaceState(null, '', name === 'clear' ? location.pathname : `${location.pathname}?preset=${name}`); }));
+  const applyPreset = (name) => applyPresetSelection({ name, presetMap, inputs, buttons: root?.querySelectorAll('[data-preset]') ?? [], update });
+  bindPresetButtons({ root, presetMap, inputs, update, replaceUrl: (name) => history.replaceState(null, '', name === 'clear' ? location.pathname : `${location.pathname}?preset=${name}`) });
   inputs.forEach((input) => input.addEventListener('change', update)); wifiInput?.addEventListener('change', update);
   window.addEventListener('lbr:region-change', (event) => { region = event.detail === 'US' ? 'US' : 'IN'; update(); }); window.addEventListener('lbr:country-change', (event) => { region = event.detail === 'US' ? 'US' : 'IN'; update(); });
   root?.querySelector('[data-copy-bom]')?.addEventListener('click', async () => { const text = selected().map((part) => { const shop = region === 'US' ? part.us : part.in; return `${part.part} — ${format(shop.price)} — ${shop.url}`; }).join('\n') || 'No parts selected'; try { await navigator.clipboard.writeText(text); if (root?.querySelector('[data-copy-status]')) root.querySelector('[data-copy-status]').textContent = 'Shopping list copied.'; } catch { if (root?.querySelector('[data-copy-status]')) root.querySelector('[data-copy-status]').textContent = 'Copy is blocked here; select the BOM text manually.'; } });

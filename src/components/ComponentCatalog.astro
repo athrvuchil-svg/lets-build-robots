@@ -1,5 +1,8 @@
 ---
 import components from '../data/components.json';
+import { commerceConfig, decorateCatalog } from '../utils/commerce.mjs';
+
+const linkedComponents = decorateCatalog(components, commerceConfig(import.meta.env));
 
 const kindLabels: Record<string, string> = {
   MCU: 'Robot brains',
@@ -15,13 +18,13 @@ const kindLabels: Record<string, string> = {
   mechanical: 'Mechanical',
   wiring: 'Wiring',
 };
-const kinds = [...new Set(components.map((part) => part.kind))];
-const roles = [...new Set(components.map((part) => part.role))];
+const kinds = [...new Set(linkedComponents.map((part) => part.kind))];
+const roles = [...new Set(linkedComponents.map((part) => part.role))];
 const kindLabel = (kind: string) => kindLabels[kind] ?? kind;
 const fallbackUse: Record<string, string> = { MCU: 'controller board', servo: 'positioned joint', motor: 'wheeled drive', stepper: 'precise rotary motion', driver: 'motor or actuator control', power: 'regulated power rail', battery: 'portable power', sensor: 'robot feedback', safety: 'protective wiring', input: 'human control', mechanical: 'robot structure', wiring: 'prototyping and connections' };
-const directProductLinks = components.filter((part) => !part.in.url.includes('?s=') && !part.us.url.includes('?s=')).length;
-const i2cParts = components.filter((part) => part.i2c).length;
-const actuatorParts = components.filter((part) => ['servo', 'motor', 'stepper'].includes(part.kind)).length;
+const directProductLinks = linkedComponents.filter((part) => !part.in.url.includes('?s=') && !part.us.url.includes('?s=')).length;
+const i2cParts = linkedComponents.filter((part) => part.i2c).length;
+const actuatorParts = linkedComponents.filter((part) => ['servo', 'motor', 'stepper'].includes(part.kind)).length;
 const buildPaths = [
   ['Walk', 'Spiderbot power + servo path', 'spiderbot-good'],
   ['Roll', 'Conveyor motor + sensor path', 'conveyor'],
@@ -51,8 +54,8 @@ const buildPaths = [
   <p class="lbr-catalog-status" data-catalog-status>Showing all {components.length} parts.</p>
   <p class="lbr-copy-status" data-catalog-copy-status role="status" aria-live="polite"></p>
 
-  <div class="lbr-catalog-grid" data-catalog-grid>
-    {components.map((part, index) => <article class="lbr-catalog-card" data-catalog-card data-index={index} data-kind={part.kind} data-role={part.role} data-price-in={part.in.price} data-price-us={part.us.price} data-weight={part.weightG} data-search={`${part.part} ${part.kind} ${part.role} ${part.logicV ?? ''} ${part.signalV ?? ''} ${part.i2c ?? ''} ${part.stallA ?? ''} ${part.maxContinuousA ?? ''} ${part.max5vA ?? ''} ${part.pwm ?? ''} ${part.weightG} ${fallbackUse[part.kind] ?? ''}`}>
+   <div class="lbr-catalog-grid" data-catalog-grid>
+     {linkedComponents.map((part, index) => <article class="lbr-catalog-card" data-catalog-card data-index={index} data-kind={part.kind} data-role={part.role} data-price-in={part.in.price} data-price-us={part.us.price} data-weight={part.weightG} data-search={`${part.part} ${part.kind} ${part.role} ${part.logicV ?? ''} ${part.signalV ?? ''} ${part.i2c ?? ''} ${part.stallA ?? ''} ${part.maxContinuousA ?? ''} ${part.max5vA ?? ''} ${part.pwm ?? ''} ${part.weightG} ${fallbackUse[part.kind] ?? ''}`}>
       <div class="lbr-catalog-card-top"><span class="lbr-chip">{part.role}</span><span class="lbr-catalog-kind">{kindLabel(part.kind)}</span><button type="button" data-expand aria-expanded="false">Details</button></div>
       <h3>{part.part}</h3>
       <p class="lbr-catalog-spec">{part.logicV ? `${part.logicV}V logic · ` : ''}{part.signalV ? `${part.signalV}V signal · ` : ''}{part.pwm ? `${part.pwm} PWM · ` : ''}{part.stallA ? `${part.stallA}A peak · ` : ''}{part.max5vA ? `${part.max5vA}A rail · ` : ''}{part.i2c ? `${part.i2c} · ` : ''}{part.weightG}g</p>
@@ -60,7 +63,7 @@ const buildPaths = [
       <div class="lbr-catalog-detail" hidden>
         <p>Kind: <b>{part.kind}</b>. {part.i2c ? `I²C address ${part.i2c}. ` : ''}{part.signalV ? `${part.signalV}V signal needs compatible inputs. ` : ''}Check the exact board datasheet and breakout wiring before connecting.</p>
         <div class="lbr-catalog-detail-actions"><a class="lbr-button lbr-button-primary lbr-catalog-forge-link" href={`/forge/?add=${part.id}`}>＋ Add to Forge</a><span class="lbr-catalog-source-note">{part.in.url.includes('?s=') || part.us.url.includes('?s=') ? 'Search source · verify exact SKU' : 'Direct product source'}</span></div>
-        <div class="lbr-buy-grid"><a href={part.in.url} data-region-link data-in={part.in.url} data-us={part.us.url} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.in.store} · ₹{part.in.price} ↗</a><a href={part.us.url} data-region-link data-in={part.in.url} data-us={part.us.url} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.us.store} · ${part.us.price.toFixed(2)} ↗</a></div>
+         <div class="lbr-buy-grid"><a href={part.in.url} data-region-link data-in={part.in.url} data-us={part.us.url} data-commerce-link data-merchant={part.in.store} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.in.store} · ₹{part.in.price} ↗</a><a href={part.us.url} data-region-link data-in={part.in.url} data-us={part.us.url} data-commerce-link data-merchant={part.us.store} target="_blank" rel="noopener noreferrer">🛒 Buy on {part.us.store} · ${part.us.price.toFixed(2)} ↗</a></div>
       </div>
     </article>)}
   </div>

@@ -2,6 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { batteryRuntime, divider, forgeMetrics, i2cScan, servoTorque, stepper, wheelSpeed } from '../src/utils/robotMath.mjs';
+import { commerceConfig, decorateMerchantUrl } from '../src/utils/commerce.mjs';
+import { bindPresetButtons } from '../src/utils/forgeUi.mjs';
+import { renderCanvasFrame } from '../src/utils/canvasFrame.mjs';
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 
@@ -13,6 +16,7 @@ test('all six LBR views exist and expose their primary route content', async () 
     ['src/pages/traps/index.mdx', 'Common Traps'],
     ['src/pages/roadmap/index.mdx', 'Robotics Roadmap'],
     ['src/pages/challenges/index.mdx', 'Challenges'],
+    ['src/pages/earn/index.mdx', 'Earn With LBR'],
   ];
   for (const [path, marker] of routes) assert.match(await read(path), new RegExp(marker));
 });
@@ -21,10 +25,15 @@ test('public product copy stays aligned with the live catalog size', async () =>
   const catalog = JSON.parse(await read('src/data/components.json'));
   assert.match(await read('README.md'), new RegExp(`${catalog.length}-part hardware catalog`));
   assert.match(await read('src/pages/index.mdx'), new RegExp(`<b>${catalog.length}<\\/b> mapped parts`));
+  assert.match(await read('src/pages/index.mdx'), /data-design-style="flat"/);
+  assert.equal((await read('LANDING_PAGE_PROMPT.md')).trim().split(/\n\s*\n/).length, 3);
   assert.match(await read('src/pages/forge/index.mdx'), /components\.length/);
   const partner = await read('src/components/PartnerCTA.astro');
   assert.match(partner, /partnership inquiry/i);
   assert.match(partner, /Affiliate or sponsor credentials/);
+  const earningPlan = await read('src/components/EarningPlan.astro');
+  assert.match(earningPlan, /PUBLIC_PAYMENT_LINK/);
+  assert.match(await read('MONETIZATION.md'), /first rupee/);
 });
 
 test('deterministic safety and lifecycle contracts are present', async () => {
@@ -63,14 +72,24 @@ test('catalog and Forge math protect the user-facing baseline', async () => {
   const forge = await read('src/components/ForgePicker.astro');
   assert.match(forge, /actuatorStallA/);
   assert.match(forge, /Quartz Components/);
+  assert.match(forge, /decorateCatalog/);
+  assert.match(await read('src/components/ComponentCatalog.astro'), /data-commerce-link/);
 });
 
 test('all catalog entries expose both real regional buy URLs', async () => {
   const catalog = JSON.parse(await read('src/data/components.json'));
+  const vendors = new Set();
   for (const part of catalog) {
     assert.match(part.in.url, /^https:\/\//, part.id);
     assert.match(part.us.url, /^https:\/\//, part.id);
+    vendors.add(part.in.store); vendors.add(part.us.store);
   }
+  for (const vendor of ['Robu.in', 'Quartz Components', 'Adafruit', 'Pololu']) assert.ok(vendors.has(vendor), vendor);
+  const forgeMarkup = await read('src/components/ForgePicker.astro');
+  const catalogMarkup = await read('src/components/ComponentCatalog.astro');
+  assert.match(forgeMarkup, /data-buy-link/);
+  assert.match(forgeMarkup, /Buy on \$\{shop\.store\}/);
+  assert.match(catalogMarkup, /data-commerce-link/);
   const sim = await read('src/components/LocalSimulatorWorkspace.astro');
   for (const id of ['spiderbot', 'arm', 'line', 'radar']) assert.match(sim, new RegExp(id));
   assert.match(sim, /requestAnimationFrame/);
@@ -79,9 +98,14 @@ test('all catalog entries expose both real regional buy URLs', async () => {
   assert.match(sim, /radarDistance = Number\(el\.value\)/);
   assert.match(sim, /function drawCurrent/);
   assert.match(sim, /renderControls\(\); renderDetail\(\); if \(!ctx\)/);
-  assert.match(sim, /Math\.max\(-1, Math\.min\(1/);
+  assert.match(sim, /const clamp =/);
   assert.match(sim, /Canvas unavailable/);
   assert.match(sim, /releasePointerCapture/);
+  assert.match(sim, /data-sim-fallback/);
+  assert.match(sim, /Could not start/);
+  const robotsPage = await read('src/pages/robots/index.mdx');
+  assert.doesNotMatch(robotsPage, /Aarav_Mechatronics/);
+  assert.match(robotsPage, /not a user testimonial/);
 });
 
 test('pure calculators and Forge presets produce observable engineering results', async () => {
@@ -114,6 +138,39 @@ test('global controls, pin filters, calculators, and pose loop are wired', async
   for (const marker of ['global-kill-island-btn', 'mode-toggle-btn', 'region-select', 'theme-toggle-btn', 'lbr-search-open', 'lbr-saved-open']) assert.match(top, new RegExp(marker));
   for (const marker of ['Show All', 'Safe for Anything', 'Best for Sensors', 'Careful at Startup', 'Never Touch']) assert.match(traps, new RegExp(marker));
   for (const marker of ['data-battery-output', 'data-torque-output', 'data-divider-output', 'data-stepper-output', 'data-i2c-output', 'data-wheel-output']) assert.match(tools, new RegExp(marker));
-  assert.match(playground, /Play Walking Animation Loop/);
+  assert.match(playground, /Play walking loop/);
   assert.match(playground, /requestAnimationFrame/);
+});
+
+test('commerce links stay direct until approved referral values are supplied', () => {
+  const direct = 'https://robu.in/product/example/';
+  assert.equal(decorateMerchantUrl(direct, commerceConfig({})), direct);
+  const tagged = decorateMerchantUrl(direct, commerceConfig({ PUBLIC_ROBU_REFERRAL_PARAM: 'ref', PUBLIC_ROBU_REFERRAL_ID: 'lbr-123' }));
+  assert.equal(new URL(tagged).searchParams.get('ref'), 'lbr-123');
+  assert.equal(new URL(decorateMerchantUrl('https://www.adafruit.com/product/1', { amazonInTag: 'tag-21' })).search, '');
+});
+
+test('DOM click contract applies Forge presets and renders a canvas frame', () => {
+  const makeNode = (value = '', preset = '') => {
+    const listeners = {};
+    return {
+      value, checked: false, dataset: { preset }, classList: { toggle() {} },
+      addEventListener(type, listener) { listeners[type] = listener; },
+      click() { listeners.click?.(); },
+    };
+  };
+  const inputs = [makeNode('brain'), makeNode('battery')];
+  const buttons = [makeNode('', 'working'), makeNode('', 'clear')];
+  let updates = 0; let replaced = '';
+  const root = { querySelectorAll: () => buttons };
+  const binding = bindPresetButtons({ root, presetMap: { working: ['brain'], clear: [] }, inputs, update: () => { updates += 1; }, replaceUrl: (name) => { replaced = name; } });
+  binding.buttons[0].click();
+  assert.equal(inputs[0].checked, true);
+  assert.equal(inputs[1].checked, false);
+  assert.equal(updates, 1);
+  assert.equal(replaced, 'working');
+  const calls = [];
+  const canvas = { getContext: () => ({ clearRect: () => calls.push('clear') }) };
+  assert.equal(renderCanvasFrame(canvas, (ctx) => ctx.clearRect(0, 0, 1, 1)), true);
+  assert.deepEqual(calls, ['clear']);
 });
