@@ -135,11 +135,13 @@ test('global controls, pin filters, calculators, and pose loop are wired', async
   const traps = await read('src/pages/traps/index.mdx');
   const tools = await read('src/components/RobotTools.astro');
   const playground = await read('src/components/LegPlayground.astro');
-  for (const marker of ['global-kill-island-btn', 'mode-toggle-btn', 'region-select', 'theme-toggle-btn', 'lbr-search-open', 'lbr-saved-open']) assert.match(top, new RegExp(marker));
+  for (const marker of ['global-kill-island-btn', 'mode-toggle-btn', 'region-select', 'theme-toggle-btn', 'lbr-search-open', 'lbr-saved-open', 'lbr-discovery-ribbon', 'data-discovery-filter', 'ArrowDown', 'ArrowUp', 'Enter', 'data-save-search']) assert.match(top, new RegExp(marker));
   for (const marker of ['Show All', 'Safe for Anything', 'Best for Sensors', 'Careful at Startup', 'Never Touch']) assert.match(traps, new RegExp(marker));
   for (const marker of ['data-battery-output', 'data-torque-output', 'data-divider-output', 'data-stepper-output', 'data-i2c-output', 'data-wheel-output']) assert.match(tools, new RegExp(marker));
   assert.match(playground, /Play walking loop/);
   assert.match(playground, /requestAnimationFrame/);
+  assert.match(await read('src/components/LocalSimulatorWorkspace.astro'), /LOCAL SIM · 60 FPS/);
+  assert.match(await read('src/components/ForgePicker.astro'), /data-forge-status/);
 });
 
 test('commerce links stay direct until approved referral values are supplied', () => {
@@ -161,14 +163,15 @@ test('DOM click contract applies Forge presets and renders a canvas frame', () =
   };
   const inputs = [makeNode('brain'), makeNode('battery')];
   const buttons = [makeNode('', 'working'), makeNode('', 'clear')];
-  let updates = 0; let replaced = '';
+  let updates = 0; let replaced = ''; let applied = '';
   const root = { querySelectorAll: () => buttons };
-  const binding = bindPresetButtons({ root, presetMap: { working: ['brain'], clear: [] }, inputs, update: () => { updates += 1; }, replaceUrl: (name) => { replaced = name; } });
+  const binding = bindPresetButtons({ root, presetMap: { working: ['brain'], clear: [] }, inputs, update: () => { updates += 1; }, replaceUrl: (name) => { replaced = name; }, onApply: (name) => { applied = name; } });
   binding.buttons[0].click();
   assert.equal(inputs[0].checked, true);
   assert.equal(inputs[1].checked, false);
   assert.equal(updates, 1);
   assert.equal(replaced, 'working');
+  assert.equal(applied, 'working');
   const calls = [];
   const canvas = { getContext: () => ({ clearRect: () => calls.push('clear') }) };
   assert.equal(renderCanvasFrame(canvas, (ctx) => ctx.clearRect(0, 0, 1, 1)), true);

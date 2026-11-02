@@ -10,11 +10,12 @@ export function applyPresetSelection({ name, presetMap, inputs, buttons = [], up
   update();
 }
 
-export function bindPresetButtons({ root, presetMap, inputs, update, replaceUrl = () => {} }) {
+export function bindPresetButtons({ root, presetMap, inputs, update, replaceUrl = () => {}, onApply = () => {} }) {
   const buttons = [...(root?.querySelectorAll('[data-preset]') ?? [])];
   const apply = (name) => {
     applyPresetSelection({ name, presetMap, inputs, buttons, update });
     replaceUrl(name);
+    onApply(name);
   };
   buttons.forEach((button) => button.addEventListener('click', () => apply(button.dataset?.preset ?? 'clear')));
   return { buttons, apply };
