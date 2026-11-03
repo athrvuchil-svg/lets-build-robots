@@ -8,46 +8,56 @@ import TopUtilityBar from '../components/TopUtilityBar.astro';
 import LocalQuestionBox from '../components/LocalQuestionBox.astro';
 import LocalSimulatorWorkspace from '../components/LocalSimulatorWorkspace.astro';
 import PartnerCTA from '../components/PartnerCTA.astro';
+import VideoLibrary from '../components/VideoLibrary.astro';
 import '../styles/custom.css';
 import LbrLayout from '../layouts/LbrLayout.astro';
 
 <LbrLayout title="Let's Build Robots" description="A browser-first robotics learning lab for people building their first real robot." path="/">
-<div class="lbr-home lbr-marketing-home not-content">
+<div class="lbr-home lbr-marketing-home lbr-flat-landing lbr-editorial-studio not-content" data-design-style="warm-editorial-engineering-studio">
   <TopUtilityBar />
 
-  <main>
+  <div>
     <section class="lbr-marketing-hero" aria-labelledby="hero-title">
       <div class="lbr-marketing-hero-copy">
-        <p class="lbr-eyebrow"><span class="lbr-pulse" aria-hidden="true"></span> A practical robotics lab for your first build</p>
-        <h1 id="hero-title">Your first robot should <em>teach</em> you something.</h1>
-        <p class="lbr-marketing-lede">Let's Build Robots turns the confusing first hour into a clear sequence: see the behavior, check the power, understand the part, then build with fewer surprises.</p>
-        <div class="lbr-hero-actions"><a class="lbr-button lbr-button-primary" href="/robots/">Open the robot lab <span aria-hidden="true">↗</span></a><a class="lbr-button lbr-button-quiet" href="/forge/?preset=spiderbot-good">Start with a safe parts list <span aria-hidden="true">→</span></a></div>
-        <div class="lbr-hero-proof"><span><b>4</b> visual labs</span><span><b>52</b> mapped parts</span><span><b>0</b> signup walls</span></div>
+        <p class="lbr-eyebrow"><span class="lbr-pulse" aria-hidden="true"></span> Interactive browser robotics lab · India ₹ / worldwide $</p>
+        <h1 id="hero-title">Test the robot before the parts become <em>expensive smoke.</em></h1>
+        <p class="lbr-marketing-lede">Most tutorials stop at raw code and blurry wiring. LBR lets you run a robot model at 60FPS, see why power and pin mistakes happen, then load a verified parts list with real regional links.</p>
+        <div class="lbr-hero-actions"><a class="lbr-button lbr-button-primary" href="/robots/">▶ Play Interactive 60FPS Sim</a><a class="lbr-button lbr-button-quiet" href="/forge/?preset=spiderbot-good">🛒 Load Verified Parts List in The Forge →</a></div>
+        <div class="lbr-hero-proof"><span><b>60FPS</b> browser models</span><span><b>52</b> mapped parts</span><span><b>1.25×</b> stall-current check</span></div>
       </div>
       <div class="lbr-marketing-hero-art" aria-label="A robotics control desk preview">
-        <div class="lbr-art-topline"><span>LAB / 01</span><span>LOCAL CONTROL DESK</span></div>
+         <div class="lbr-art-topline"><span>LAB / 01</span><span>FLAT ROBOT WORKBENCH</span></div>
         <div class="lbr-art-grid"></div>
         <div class="lbr-art-robot"><span class="lbr-art-joint lbr-art-joint-a"></span><span class="lbr-art-joint lbr-art-joint-b"></span><span class="lbr-art-joint lbr-art-joint-c"></span><span class="lbr-art-foot lbr-art-foot-a"></span><span class="lbr-art-foot lbr-art-foot-b"></span><span class="lbr-art-foot lbr-art-foot-c"></span><span class="lbr-art-foot lbr-art-foot-d"></span></div>
-        <div class="lbr-art-readout"><span>POWER RAIL</span><strong>5.00 V</strong><i></i><small>separate servo supply</small></div>
-        <div class="lbr-art-caption"><span>01</span><strong>SPIDERBOT / READY</strong><small>12 servo channels · PCA9685</small></div>
+        <div class="lbr-art-readout"><span>POWER RAIL</span><strong>5.00 V</strong><i></i><small>separate servo supply · stable</small></div>
+        <div class="lbr-art-caption"><span>LIVE</span><strong>SPIDERBOT / 60 FPS</strong><small>12 servo channels · PCA9685 · 4.8 A</small></div>
       </div>
     </section>
 
-    <section class="lbr-proof-band" aria-label="Why people use LBR"><span class="lbr-proof-label">BUILT FOR THE MOMENT BEFORE THE FIRST WIRE</span><span>See it move</span><span>Know the limit</span><span>Buy less blindly</span><span>Learn in public</span></section>
+    <section class="lbr-proof-band" aria-label="Why people use LBR"><span class="lbr-proof-label">BUILT FOR THE MOMENT BEFORE THE FIRST WIRE</span><span>See it move</span><span>Know the limit</span><span>Buy the right part</span><span>Learn with evidence</span></section>
 
-    <section class="lbr-marketing-section" aria-labelledby="how-title"><div class="lbr-marketing-section-head"><div><p class="lbr-kicker">The LBR loop</p><h2 id="how-title">A better first 30 minutes.</h2></div><p>Not a course dashboard. Not a parts marketplace. A focused workbench for making the next decision with evidence.</p></div><div class="lbr-loop-grid"><article><span>01</span><h3>Watch the behavior</h3><p>Run a local robot model and see how speed, steering, torque, or power changes the result.</p><a href="/robots/">Try a lab →</a></article><article><span>02</span><h3>Check the system</h3><p>Use the Forge and calculators to catch current, voltage, PWM, address, and shipping problems early.</p><a href="/forge/">Open The Forge →</a></article><article><span>03</span><h3>Build with context</h3><p>Open the part, the pin guide, and the source repository so the physical build has a reason behind it.</p><a href="/components/">Browse the catalog →</a></article></div></section>
+    <section class="lbr-audience-paths" aria-labelledby="audience-paths-title">
+      <div class="lbr-marketing-section-head"><div><p class="lbr-kicker">Choose your starting point</p><h2 id="audience-paths-title">Learn at your speed. Build with evidence.</h2></div><p>Both paths use the same honest safety rules. Start simple, or go straight to real open-source projects.</p></div>
+      <div class="lbr-audience-grid">
+        <article class="lbr-audience-card lbr-audience-beginner"><span class="lbr-audience-label">PATH 01 · BEGINNER</span><h3>I’m a beginner</h3><p>Start with plain-English lessons, safe failure demos, and a checked shopping list before buying parts.</p><ul><li>Follow the live robot workcells</li><li>See brownouts and pin mistakes safely</li><li>Use The Forge to check your parts</li></ul><a class="lbr-button lbr-button-primary" href="/robots/">Start the beginner lab <span aria-hidden="true">→</span></a></article>
+        <article class="lbr-audience-card lbr-audience-advanced"><span class="lbr-audience-label">PATH 02 · ADVANCED</span><h3>I’m an advanced builder</h3><p>Start with the verified reference desk while project breakdowns are added from public repositories with licence-aware notes.</p><ul><li>Inspect the component catalog</li><li>Use deterministic calculators</li><li>Read the robotics documentation</li></ul><a class="lbr-button lbr-button-quiet" href="/docs/">Open the reference desk <span aria-hidden="true">→</span></a></article>
+      </div>
+    </section>
 
-    <section class="lbr-marketing-section lbr-featured-section" aria-labelledby="featured-title"><div class="lbr-marketing-section-head"><div><p class="lbr-kicker">Start with a real project</p><h2 id="featured-title">Pick the kind of robot you want to understand.</h2></div><a class="lbr-text-link" href="/robots/">See all four labs <b>→</b></a></div><div class="lbr-featured-grid"><a href="/robots/" class="lbr-featured-card lbr-featured-dark"><span class="lbr-featured-number">01 / WALK</span><div><h3>Spiderbot</h3><p>Twelve servos, a separate power rail, and a visible brownout test.</p></div><strong>Open lab ↗</strong></a><a href="/robots/" class="lbr-featured-card lbr-featured-paper"><span class="lbr-featured-number">02 / REACH</span><div><h3>Desktop arm</h3><p>Click a target, solve the pose, and see when the servo runs out of torque.</p></div><strong>Open lab ↗</strong></a><a href="/robots/" class="lbr-featured-card lbr-featured-orange"><span class="lbr-featured-number">03 / TRACK</span><div><h3>PID rover</h3><p>Tune the loop and learn why a fast line follower can lose the line.</p></div><strong>Open lab ↗</strong></a></div></section>
+    <section class="lbr-marketing-section lbr-simulator-cards-section" aria-labelledby="simulator-cards-title"><div class="lbr-marketing-section-head"><div><p class="lbr-kicker">The first click</p><h2 id="simulator-cards-title">Choose a machine. Press play.</h2></div><p>Every card opens the same local workcell with a clear control, a visible canvas, and a path into The Forge.</p></div><div class="lbr-simulator-card-grid"><a href="/robots/?sim=spiderbot" class="lbr-simulator-card"><span>01 · WALK</span><strong>4-Legged Spiderbot</strong><small>Gait phase · servo load · 5V buck vs brownout</small><b>▶ Run walker</b></a><a href="/robots/?sim=arm" class="lbr-simulator-card"><span>02 · REACH</span><strong>6-DOF Robot Arm</strong><small>Click-to-reach IK target · torque margin</small><b>▶ Run arm</b></a><a href="/robots/?sim=line" class="lbr-simulator-card"><span>03 · TRACK</span><strong>PID Line Follower</strong><small>Track error · Kp/Kd tuning · obstacle stop</small><b>▶ Run rover</b></a><a href="/robots/?sim=radar" class="lbr-simulator-card"><span>04 · SENSE</span><strong>Ultrasonic Radar + Conveyor</strong><small>Sonar sweep · package queue · driver heat</small><b>▶ Run sorter</b></a></div></section>
+
+    <section class="lbr-marketing-section" aria-labelledby="how-title"><div class="lbr-marketing-section-head"><div><p class="lbr-kicker">The LBR loop</p><h2 id="how-title">Simulate → Validate → Build.</h2></div><p>One conversion path from the browser model to a safer shopping list, without pretending a simulation replaces a datasheet.</p></div><div class="lbr-loop-grid"><article><span>01 · SIMULATE</span><h3>See the behavior</h3><p>Run the 60FPS model and tune speed, PID, payload, range, or power. Watch the mechanism and telemetry change.</p><a href="/robots/">▶ Play the simulator →</a></article><article><span>02 · VALIDATE</span><h3>Check The Forge</h3><p>Catch 1.25× stall-current headroom, the ESP32 0.6A rail limit, 3.3V/5V mismatches, and I²C collisions.</p><a href="/forge/?preset=spiderbot-good">🛒 Validate a kit →</a></article><article><span>03 · EXPORT</span><h3>Pose and buy with context</h3><p>Use the pose lab, code export, regional pricing, delivery thresholds, and direct component sources.</p><a href="/playground/">Pose + export code →</a></article></div></section>
 
     <section class="lbr-marketing-section lbr-lab-section" aria-labelledby="lab-title"><div class="lbr-marketing-section-head"><div><p class="lbr-kicker">The workbench</p><h2 id="lab-title">Try it before you buy it.</h2></div><p>Load the local lab when you are ready. Nothing is pretending to be a physical robot, and nothing runs until you ask it to.</p></div><LocalSimulatorWorkspace /></section>
 
+    <VideoLibrary />
+
     <section class="lbr-marketing-section lbr-honesty-section" aria-labelledby="honesty-title"><div class="lbr-honesty-copy"><p class="lbr-kicker">The honest layer</p><h2 id="honesty-title">No fake “AI recommendations.” Just visible trade-offs.</h2><p>LBR tells you when a part list is safe, weak, incomplete, or over budget. Retail prices are regional snapshots. Simulations are browser models. Hardware still needs a datasheet and supervised testing.</p><a class="lbr-button lbr-button-primary" href="/traps/">Read the mistake saver guide →</a></div><div class="lbr-honesty-list"><div><span>POWER</span><strong>Separate the servo rail</strong><small>Keep a 12-servo build from browning out the controller.</small></div><div><span>PINS</span><strong>Respect the ESP32</strong><small>ADC2, boot straps, input-only pins, and 5V signals matter.</small></div><div><span>PARTS</span><strong>Buy with a reason</strong><small>Every catalog card connects the job, the limit, and the source.</small></div></div></section>
 
-    <section class="lbr-marketing-section lbr-final-cta" aria-labelledby="final-title"><div><p class="lbr-kicker">Ready when you are</p><h2 id="final-title">Make your next robot decision a better one.</h2><p>Start in the browser. Leave with a clearer build plan.</p></div><div class="lbr-final-actions"><a class="lbr-button lbr-button-primary" href="/robots/">Open the lab ↗</a><a class="lbr-button lbr-button-quiet" href="/roadmap/">See the roadmap</a></div></section>
+    <section class="lbr-marketing-section lbr-final-cta" aria-labelledby="final-title"><div><p class="lbr-kicker">Ready for the 2 AM problem before it happens?</p><h2 id="final-title">Play the robot. Validate the parts. Build with fewer surprises.</h2><p>Start with the same CTA wherever you enter: run the model, then load the verified kit.</p></div><div class="lbr-final-actions"><a class="lbr-button lbr-button-primary" href="/robots/">▶ Play Interactive 60FPS Sim</a><a class="lbr-button lbr-button-quiet" href="/forge/?preset=spiderbot-good">🛒 Load Verified Parts List in The Forge →</a></div></section>
 
     <section class="lbr-community-card lbr-marketing-community" aria-labelledby="community-title"><div class="lbr-community-heading"><div><p class="lbr-kicker">Build in public, carefully</p><h3 id="community-title">Ask a small question. Keep the answer.</h3></div><span class="lbr-local-badge">SAVED IN THIS BROWSER</span></div><div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>What changed when your robot finally worked?</strong><p>Keep a short build note: the part, the measurement, and the next thing you would test.</p><span data-question-list>Starter guidance is ready.</span></div></div><LocalQuestionBox /></section>
     <PartnerCTA />
-  </main>
-  <footer class="lbr-footer"><span><b>LBR</b> · Let's Build Robots</span><span>Open source · browser-first · built to be shared</span></footer>
+  </div>
 </div>
 </LbrLayout>

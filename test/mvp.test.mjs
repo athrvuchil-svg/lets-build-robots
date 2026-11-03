@@ -10,7 +10,7 @@ const read = (path) => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 
 test('all six LBR views exist and expose their primary route content', async () => {
   const routes = [
-    ['src/pages/index.mdx', 'Open the robot lab'],
+    ['src/pages/index.mdx', 'Play Interactive 60FPS Sim'],
     ['src/pages/forge/index.mdx', 'The Forge'],
     ['src/pages/playground/index.mdx', '3D Leg Playground'],
     ['src/pages/traps/index.mdx', 'Common Traps'],
@@ -21,11 +21,28 @@ test('all six LBR views exist and expose their primary route content', async () 
   for (const [path, marker] of routes) assert.match(await read(path), new RegExp(marker));
 });
 
+test('phase 1 foundation exposes both audience paths and validated collections', async () => {
+  const home = await read('src/pages/index.mdx');
+  const layout = await read('src/layouts/LbrLayout.astro');
+  const contentConfig = await read('src/content.config.ts');
+  assert.match(home, /I’m a beginner/);
+  assert.match(home, /I’m an advanced builder/);
+  assert.match(home, /href="\/robots\/"/);
+  assert.match(home, /href="\/docs\/"/);
+  assert.match(layout, /id="main-content"/);
+  assert.match(layout, /SiteFooter/);
+  assert.match(contentConfig, /parts: defineCollection/);
+  assert.match(contentConfig, /builds: defineCollection/);
+  assert.match(contentConfig, /projects: defineCollection/);
+});
+
 test('public product copy stays aligned with the live catalog size', async () => {
   const catalog = JSON.parse(await read('src/data/components.json'));
   assert.match(await read('README.md'), new RegExp(`${catalog.length}-part hardware catalog`));
   assert.match(await read('src/pages/index.mdx'), new RegExp(`<b>${catalog.length}<\\/b> mapped parts`));
-  assert.match(await read('src/pages/index.mdx'), /data-design-style="flat"/);
+  assert.match(await read('src/pages/index.mdx'), /data-design-style="warm-editorial-engineering-studio"/);
+  assert.match(await read('src/pages/index.mdx'), /Play Interactive 60FPS Sim/);
+  assert.match(await read('src/pages/index.mdx'), /Load Verified Parts List in The Forge/);
   assert.equal((await read('LANDING_PAGE_PROMPT.md')).trim().split(/\n\s*\n/).length, 3);
   assert.match(await read('src/pages/forge/index.mdx'), /components\.length/);
   const partner = await read('src/components/PartnerCTA.astro');
@@ -97,7 +114,7 @@ test('all catalog entries expose both real regional buy URLs', async () => {
   assert.match(sim, /pointerdown/);
   assert.match(sim, /radarDistance = Number\(el\.value\)/);
   assert.match(sim, /function drawCurrent/);
-  assert.match(sim, /renderControls\(\); renderDetail\(\); if \(!ctx\)/);
+  assert.match(sim, /renderControls\(\); renderDetail\(\);/);
   assert.match(sim, /const clamp =/);
   assert.match(sim, /Canvas unavailable/);
   assert.match(sim, /releasePointerCapture/);
@@ -106,6 +123,11 @@ test('all catalog entries expose both real regional buy URLs', async () => {
   const robotsPage = await read('src/pages/robots/index.mdx');
   assert.doesNotMatch(robotsPage, /Aarav_Mechatronics/);
   assert.match(robotsPage, /not a user testimonial/);
+  assert.match(robotsPage, /robot-workcell/);
+  assert.match(await read('src/components/VideoLibrary.astro'), /bmoGfBe63ZA/);
+  assert.doesNotMatch(await read('src/components/VideoLibrary.astro'), /Community build pick/);
+  assert.match(await read('src/components/VideoLibrary.astro'), /10-video build shelf/);
+  assert.match(sim, /new URLSearchParams\(location\.search\)/);
 });
 
 test('pure calculators and Forge presets produce observable engineering results', async () => {

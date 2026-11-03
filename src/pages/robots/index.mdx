@@ -19,21 +19,23 @@ import LbrLayout from '../../layouts/LbrLayout.astro';
 
   <section class="lbr-page-hero" aria-labelledby="robots-title">
     <div>
-      <p class="lbr-eyebrow"><span class="lbr-pulse" aria-hidden="true"></span> Beginner-friendly robot lab</p>
-      <h1 id="robots-title">Try a robot idea<br /><span>before you wire it.</span></h1>
-      <p class="lbr-hero-lede">Run a real browser simulation, then pull current open-source robot code from GitHub. The distinction is visible: local physics stays local, repository data comes from the live public API.</p>
+      <p class="lbr-eyebrow"><span class="lbr-pulse" aria-hidden="true"></span> Interactive browser robotics lab · 60FPS local models</p>
+      <h1 id="robots-title">Play the robot<br /><span>before you wire it.</span></h1>
+      <p class="lbr-hero-lede">Choose a workcell, press Run, tune one parameter, and watch the canvas respond. Then watch the matching build tutorial and load the verified parts path in The Forge.</p>
+      <div class="lbr-hero-actions"><a class="lbr-button lbr-button-primary" href="#robot-workcell">▶ Play Interactive 60FPS Sim</a><a class="lbr-button lbr-button-quiet" href="/forge/?preset=spiderbot-good">🛒 Load Verified Parts List in The Forge →</a></div>
     </div>
     <div class="lbr-page-hero-note"><strong>04</strong><span>canvas profiles</span><small>60FPS local animation · no hardware control</small></div>
   </section>
 
-  <LocalSimulatorWorkspace />
+  <section id="robot-workcell" aria-label="Interactive robot simulator"><LocalSimulatorWorkspace /></section>
   <GitHubRobotPull />
   <VideoLibrary />
   <PartnerCTA />
 
   <section class="lbr-community-card lbr-robots-community" aria-labelledby="robots-community-title">
     <div class="lbr-community-heading"><div><p class="lbr-kicker">Starter Q&amp;A</p><h2 id="robots-community-title">What should I try first?</h2></div><span class="lbr-local-badge">SAFETY FIRST</span></div>
-    <div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>Does this simulator replace testing a real robot?</strong><p>No. It is a deterministic browser model for timing and signals. Use datasheets, current limits, and supervised bench testing for real hardware.</p><span><strong>Engineering example:</strong> A separate 5V servo rail and PCA9685 can reduce shaking by keeping high-current servo loads away from the ESP32 logic supply. This is an explanation, not a user testimonial.</span></div></div>
+    <div class="lbr-question"><div class="lbr-avatar">LBR</div><div><strong>What does the simulator prove?</strong><p>It makes behavior, timing, control response, and failure modes visible in the browser. It does not certify a physical build; verify exact parts with datasheets and supervised bench testing.</p><span><strong>Engineering example:</strong> A separate 5V servo rail and PCA9685 can reduce shaking by keeping high-current servo loads away from the ESP32 logic supply. This is an explanation, not a user testimonial.</span></div></div>
+    <div class="lbr-faq-grid"><details><summary>Why did my servo model brown out?</summary><p>The 9V toy-battery path is intentionally weak; compare it with the separate buck + PCA9685 path, then inspect the Forge current report.</p></details><details><summary>Can I use this instead of hardware testing?</summary><p>No. Use the model to learn and catch obvious incompatibilities before buying; use datasheets and supervised tests for the physical robot.</p></details><details><summary>Where is the tutorial?</summary><p>Open WATCH BUILD inside the workcell to load the matching YouTube tutorial without making the page heavy at first load.</p></details></div>
     <LocalQuestionBox /><p class="lbr-muted-copy">Questions are saved in this browser for now. A public Giscus discussion will be connected when repository discussion identifiers are configured.</p>
   </section>
 </div>

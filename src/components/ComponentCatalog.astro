@@ -44,13 +44,13 @@ const buildPaths = [
   </div>
 
   <div class="lbr-catalog-toolbar">
-    <label class="lbr-catalog-search"><span>Search hardware</span><input type="search" placeholder="Try: 3.3V, servo, 0x40, wheel, driver…" data-catalog-search /></label>
-    <label class="lbr-catalog-select"><span>Category</span><select data-catalog-kind><option value="all">All categories</option>{kinds.map((kind) => <option value={kind}>{kindLabel(kind)}</option>)}</select></label>
-    <label class="lbr-catalog-select"><span>Sort by</span><select data-catalog-sort><option value="default">Recommended order</option><option value="name">Name</option><option value="price-in">India price</option><option value="price-us">USA price</option><option value="weight">Weight</option></select></label>
+     <label class="lbr-catalog-search" for="catalog-search"><span>Search hardware</span><input id="catalog-search" type="search" placeholder="Try: 3.3V, servo, 0x40, wheel, driver…" data-catalog-search /></label>
+     <label class="lbr-catalog-select" for="catalog-kind"><span>Category</span><select id="catalog-kind" data-catalog-kind><option value="all">All categories</option>{kinds.map((kind) => <option value={kind}>{kindLabel(kind)}</option>)}</select></label>
+     <label class="lbr-catalog-select" for="catalog-sort"><span>Sort by</span><select id="catalog-sort" data-catalog-sort><option value="default">Recommended order</option><option value="name">Name</option><option value="price-in">India price</option><option value="price-us">USA price</option><option value="weight">Weight</option></select></label>
     <button class="lbr-catalog-copy lbr-button lbr-button-quiet" type="button" data-catalog-copy>Copy visible parts</button>
   </div>
   <div class="lbr-catalog-paths" aria-label="Build paths">{buildPaths.map(([label, description, preset]) => <a href={`/forge/?preset=${preset}`}><span>{label}</span><small>{description}</small><b>Open Forge →</b></a>)}</div>
-  <div class="lbr-catalog-filters" role="group" aria-label="Filter component roles"><span>Job</span><button type="button" class="lbr-filter is-active" data-catalog-role="all">All</button>{roles.map((role) => <button type="button" class="lbr-filter" data-catalog-role={role}>{role}</button>)}</div>
+  <div class="lbr-catalog-filters" role="group" aria-label="Filter component roles"><span>Job</span><button type="button" class="lbr-filter is-active" aria-pressed="true" data-catalog-role="all">All</button>{roles.map((role) => <button type="button" class="lbr-filter" aria-pressed="false" data-catalog-role={role}>{role}</button>)}</div>
   <p class="lbr-catalog-status" data-catalog-status>Showing all {components.length} parts.</p>
   <p class="lbr-copy-status" data-catalog-copy-status role="status" aria-live="polite"></p>
 
@@ -110,7 +110,7 @@ const buildPaths = [
   }
   search?.addEventListener('input', filter); kind?.addEventListener('change', filter); sort?.addEventListener('change', filter);
   copyButton?.addEventListener('click', async () => { const visible = cards.filter((card) => !card.hidden).map((card) => card.querySelector('h3')?.textContent?.trim()).filter(Boolean).join('\n'); try { await navigator.clipboard.writeText(visible || 'No visible parts'); if (copyStatus) copyStatus.textContent = `${visible ? visible.split('\n').length : 0} part names copied.`; } catch { if (copyStatus) copyStatus.textContent = 'Copy is blocked here; select the visible cards manually.'; } });
-  catalogRoot?.querySelectorAll('[data-catalog-role]').forEach((button) => button.addEventListener('click', () => { activeRole = button.dataset.catalogRole ?? 'all'; catalogRoot.querySelectorAll('[data-catalog-role]').forEach((item) => item.classList.toggle('is-active', item === button)); filter(); }));
+   catalogRoot?.querySelectorAll('[data-catalog-role]').forEach((button) => button.addEventListener('click', () => { activeRole = button.dataset.catalogRole ?? 'all'; catalogRoot.querySelectorAll('[data-catalog-role]').forEach((item) => { const active = item === button; item.classList.toggle('is-active', active); item.setAttribute('aria-pressed', String(active)); }); filter(); }));
   cards.forEach((card) => card.querySelector('[data-expand]')?.addEventListener('click', () => { const detail = card.querySelector('.lbr-catalog-detail'); const button = card.querySelector('[data-expand]'); const open = button.getAttribute('aria-expanded') === 'true'; button.setAttribute('aria-expanded', String(!open)); button.textContent = open ? 'Details' : 'Hide details'; detail.hidden = open; }));
   function updateLinks(region) { catalogRoot?.querySelectorAll('[data-region-link]').forEach((link) => { link.href = region === 'US' ? link.dataset.us : link.dataset.in; }); }
   updateLinks(localStorage.getItem('lbr-region') === 'US' ? 'US' : 'IN');
